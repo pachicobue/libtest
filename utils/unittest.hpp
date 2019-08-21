@@ -97,7 +97,7 @@ private:
             generated_out_path.replace_extension(".out");
             if (fs::exists(generated_out_path)) {
                 generated_output_file.open(generated_out_path), solution_output_file_in.open(solution_out_path);
-                const bool ok = Problem::validateOutputSmall(input_file, generated_output_file, solution_output_file_in);
+                const bool ok = Problem::validateOutput(input_file, generated_output_file, solution_output_file_in);
                 if (not ok) {
                     *g_logger_ptr << Color::RED << "[       WA ] " << Color::RESET << input_file_path.filename() << " (" << time_ms << " ms)" << std::endl;
                 } else {
