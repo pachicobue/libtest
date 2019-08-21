@@ -2,11 +2,11 @@
 
 ライブラリのテストに使うための問題集  
 CIで使いやすいように、入出力自動生成＋自動テストみたいな流れでテストする  
-[rime]("https://github.com/icpc-jag/rime") の機能限定版という感じ
+[rime](https://github.com/icpc-jag/rime) の機能限定版という感じ
 
 ## 必要なもの
 
-- [CMake]("https://cmake.org/") 
+- [CMake](https://cmake.org/) 
 - C++17 ([filesystem](https://cpprefjp.github.io/reference/filesystem.html)が使える環境)
 
 ## テストの流れ
