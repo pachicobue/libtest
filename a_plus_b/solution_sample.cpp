@@ -57,7 +57,7 @@ struct TLE_2
 }  // namespace
 int main()
 {
-    libtest::UnitTest<libtest::A_Plus_B> unit_test{3, 3};  // smallを5ケース, largeを5ケース生成
+    libtest::UnitTest<libtest::A_Plus_B> unit_test{5, 5};  // smallを5ケース, largeを5ケース生成
     unit_test.runTest<AC>();
     unit_test.runTest<WA>();
     unit_test.runTest<TLE_1>();
