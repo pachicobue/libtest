@@ -4,12 +4,13 @@
  * 本来はlibtestにはproblem.hppのような問題だけ置き、solutionはライブラリ側で実装する
  * ライブラリを用いて解法を実装、テストする方法を例示する
  */
+#include "../utils/logger.hpp"
 #include "../utils/unittest.hpp"
 #include "problem.hpp"
 namespace {
 struct AC
 {
-    static constexpr const char* NAME = "AC";
+    static constexpr const char* NAME = "AC";  // 解法名
     static void solve(std::ifstream& input_file, std::ostream& solution_output_file)
     {
         using namespace libtest;
@@ -56,8 +57,7 @@ struct TLE_2
 }  // namespace
 int main()
 {
-    using namespace libtest;
-    UnitTest<A_Plus_B> unit_test{3, 3};  // smallを5ケース, largeを5ケース生成
+    libtest::UnitTest<libtest::A_Plus_B> unit_test{3, 3};  // smallを5ケース, largeを5ケース生成
     unit_test.runTest<AC>();
     unit_test.runTest<WA>();
     unit_test.runTest<TLE_1>();
