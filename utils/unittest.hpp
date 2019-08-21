@@ -16,13 +16,14 @@ public:
     template <typename Solution>
     bool runTest()
     {
-        *g_logger_ptr << Color::GREEN << "[==========] " << Color::RESET << Color::BOLD << "Begin unittest (problem=\"" << Problem::NAME << "\",solution=\"" << Solution::NAME << "\")" << Color::RESET << std::endl;
+        *g_logger_ptr << Color::GREEN << "[==========] " << Color::RESET << Color::BOLD << "Start (problem=\"" << Problem::NAME << "\",solution=\"" << Solution::NAME << "\")" << Color::RESET << std::endl;
         gen();
         const auto result = test<Solution>();
         summarize(result);
-        *g_logger_ptr << Color::GREEN << "[==========] " << Color::RESET << Color::BOLD << "End unittest (problem=\"" << Problem::NAME << "\",solution=\"" << Solution::NAME << "\")" << Color::RESET << std::endl;
+        const bool passed = result.second == 0;
+        *g_logger_ptr << Color::GREEN << "[==========] " << Color::RESET << Color::BOLD << (passed ? "Passed" : "Failed") << " (problem=\"" << Problem::NAME << "\",solution=\"" << Solution::NAME << "\")" << Color::RESET << std::endl;
         *g_logger_ptr << std::endl;
-        return result.second == 0;
+        return passed;
     }
 
 private:
@@ -55,7 +56,7 @@ private:
         static std::ofstream input_file;
         static std::ifstream output_file;
         fs::create_directory(testcase_dir), fs::create_directory(gen_case_dir);
-        for (std::size_t index = 0; index < small_gen_num; index++) {
+        for (std::size_t index = 1; index <= small_gen_num; index++) {
             const fs::path input_file_path = smallGenFilePath(index, true), output_file_path = smallGenFilePath(index, false);
             if (fs::exists(input_file_path)) { continue; }
             *g_logger_ptr << Color::GREEN << "[ GENERATE ] " << Color::RESET << input_file_path.filename() << std::endl;
@@ -66,7 +67,7 @@ private:
             Problem::generateOutputSmall(output_file, input_file);
             input_file.close(), output_file.close();
         }
-        for (std::size_t index = 0; index < large_gen_num; index++) {
+        for (std::size_t index = 1; index <= large_gen_num; index++) {
             const fs::path input_file_path = largeGenFilePath(index, true);
             if (fs::exists(input_file_path)) { continue; }
             *g_logger_ptr << Color::GREEN << "[ GENERATE ] " << Color::RESET << input_file_path.filename() << std::endl;
@@ -91,7 +92,7 @@ private:
             *g_logger_ptr << Color::RED << "[==========] " << Color::RESET << Color::BOLD << "Abort unittest (problem=\"" << Problem::NAME << "\",solution=\"" << Solution::NAME << "\")" << Color::RESET << std::endl;
             std::terminate();
         } else if (time_ms >= Problem::TL) {
-            *g_logger_ptr << Color::RED << "[      TLE ] " << Color::RESET << input_file_path.filename() << " (" << time_ms << "ms)" << std::endl;
+            *g_logger_ptr << Color::RED << "[      TLE ] " << Color::RESET << input_file_path.filename() << " (" << time_ms << " ms,TL=" << Problem::TL << " ms)" << std::endl;
         } else {
             auto generated_out_path = input_file_path;
             generated_out_path.replace_extension(".out");
@@ -126,11 +127,11 @@ private:
             if (input_file_path.extension() != ".in") { continue; }
             (check<Solution>(input_file_path) ? passed : failed)++;
         }
-        for (std::size_t index = 0; index < small_gen_num; index++) {
+        for (std::size_t index = 1; index <= small_gen_num; index++) {
             const auto input_file_path = smallGenFilePath(index, true);
             (check<Solution>(input_file_path) ? passed : failed)++;
         }
-        for (std::size_t index = 0; index < large_gen_num; index++) {
+        for (std::size_t index = 1; index <= large_gen_num; index++) {
             const auto input_file_path = largeGenFilePath(index, true);
             (check<Solution>(input_file_path) ? passed : failed)++;
         }
