@@ -1,3 +1,5 @@
 .ccls-cache
 build
-**/cases
+**/test_cases
+.idea
+cmake-build-debug
