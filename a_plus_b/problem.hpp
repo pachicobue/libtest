@@ -4,8 +4,9 @@
 namespace libtest {
 struct A_Plus_B
 {
-    static constexpr const char* NAME = "a_plus_b";
-    static constexpr std::size_t TL = 2000;
+    static constexpr const char* PATH = "a_plus_b";  // 相対パスはa_plus_b
+    static constexpr const char* NAME = "A+B";       // 問題名はA+B
+    static constexpr std::size_t TL = 100;           // 実行時間制限は500ms
     struct Small
     {
         static constexpr int AMIN = 0, AMAX = 100;
@@ -25,11 +26,11 @@ struct A_Plus_B
         input_file >> A >> B;
         output_file << A + B << std::endl;
     }
-    static bool validateOutputSmall(std::ifstream& /* input_file */, std::ifstream& generated_output_file, std::ifstream& solver_output_file)
+    static bool validateOutputSmall(std::ifstream& /* input_file */, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
     {
         int actual, output;
         generated_output_file >> actual;
-        solver_output_file >> output;
+        solution_output_file >> output;
         return actual == output;
     }
 };

@@ -8,9 +8,5 @@ project(LibTest CXX)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_compile_definitions(LIBTEST_ROOT="${CMAKE_CURRENT_SOURCE_DIR}")
 
-function(gen_test test_name)
-  add_executable(${test_name} ${test_name}/main.cpp)
-  target_link_libraries(${test_name} pthread stdc++fs)
-endfunction()
-
-gen_test(a_plus_b)
+add_executable(a_plus_b a_plus_b/solution_sample.cpp)
+target_link_libraries(a_plus_b pthread stdc++fs)
