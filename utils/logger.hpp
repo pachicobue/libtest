@@ -58,5 +58,7 @@ private:
     std::ostream& os;
 };
 std::unique_ptr<Logger> g_logger_ptr = std::make_unique<Logger>(std::cout);
-void setRedirect(std::ostream& os) { g_logger_ptr = std::make_unique<Logger>(os); }
+void muteLog() { g_logger_ptr->mute(); }
+void unmuteLog() { g_logger_ptr->unmute(); }
+void redirectLog(std::ostream& os) { g_logger_ptr = std::make_unique<Logger>(os); }
 }  // namespace libtest
