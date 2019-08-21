@@ -1,0 +1,16 @@
+cmake_minimum_required(VERSION 3.10)
+set(CMAKE_SYSTEM_NAME Generic)
+set(CMAKE_CXX_COMPILER g++)
+set(CMAKE_CXX_FLAGS "-std=c++17 -Wall -Wextra -Wconversion")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3 -fsanitize=undefined -D_GLIBCXX_DEBUG -DHOGEPACHI")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+project(LibTest CXX)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+add_compile_definitions(LIBTEST_ROOT="${CMAKE_CURRENT_SOURCE_DIR}")
+
+function(gen_test test_name)
+  add_executable(${test_name} ${test_name}/main.cpp)
+  target_link_libraries(${test_name} pthread stdc++fs)
+endfunction()
+
+gen_test(a_plus_b)
