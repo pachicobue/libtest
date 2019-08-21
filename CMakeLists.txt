@@ -1,11 +1,4 @@
 cmake_minimum_required(VERSION 3.10)
-set(CMAKE_SYSTEM_NAME Generic)
-set(CMAKE_CXX_COMPILER g++)
-set(CMAKE_CXX_FLAGS "-std=c++17 -Wall -Wextra -Wconversion")
-set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3 -fsanitize=undefined -D_GLIBCXX_DEBUG -DHOGEPACHI")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-project(LibTest CXX)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_compile_definitions(LIBTEST_ROOT="${CMAKE_CURRENT_SOURCE_DIR}")
 
 add_executable(a_plus_b a_plus_b/solution_sample.cpp)
