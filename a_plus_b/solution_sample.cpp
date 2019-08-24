@@ -5,61 +5,62 @@
  * ライブラリを用いて解法を実装、テストする方法を例示する
  */
 #include "../utils/logger.hpp"
-#include "../utils/unittest.hpp"
+#include "../utils/unit_test.hpp"
 #include "problem.hpp"
 namespace {
-struct AC
+struct ac
 {
-    static constexpr const char* NAME = "AC";  // 解法名
+    static constexpr const char* name = "AC";  // 解法名
     static void solve(std::ifstream& input_file, std::ostream& solution_output_file)
     {
         using namespace libtest;
-        int A, B;
-        input_file >> A >> B;
-        solution_output_file << A + B << std::endl;
+        int a, b;
+        input_file >> a >> b;
+        solution_output_file << a + b << std::endl;
     }
 };
-struct WA
+struct wa
 {
-    static constexpr const char* NAME = "WA";
+    static constexpr const char* name = "WA";
     static void solve(std::ifstream& input_file, std::ostream& solution_output_file)
     {
         using namespace libtest;
-        int A, B;
-        input_file >> A >> B;
-        solution_output_file << A + B + 1 << std::endl;
+        int a, b;
+        input_file >> a >> b;
+        solution_output_file << a + b + 1 << std::endl;
     }
 };
-struct TLE_1
+struct tle_soft
 {
-    static constexpr const char* NAME = "Soft TLE";
+    static constexpr const char* name = "Soft TLE";
     static void solve(std::ifstream& input_file, std::ostream& solution_output_file)
     {
         using namespace libtest;
-        std::this_thread::sleep_for(std::chrono::milliseconds{A_Plus_B::TL + 50});
-        int A, B;
-        input_file >> A >> B;
-        solution_output_file << A + B << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds{a_plus_b::time_limit + 50});
+        int a, b;
+        input_file >> a >> b;
+        solution_output_file << a + b << std::endl;
     }
 };
-struct TLE_2
+struct tle_hard
 {
-    static constexpr const char* NAME = "Heavy TLE";
+    static constexpr const char* name = "Heavy TLE";
     static void solve(std::ifstream& input_file, std::ostream& solution_output_file)
     {
         using namespace libtest;
         while (true) {}
-        int A, B;
-        input_file >> A >> B;
-        solution_output_file << A + B << std::endl;
+        int a, b;
+        input_file >> a >> b;
+        solution_output_file << a + b << std::endl;
     }
 };
 }  // namespace
 int main()
 {
-    libtest::UnitTest<libtest::A_Plus_B> unit_test{5, 5};  // smallを5ケース, largeを5ケース生成
-    unit_test.runTest<AC>();
-    unit_test.runTest<WA>();
-    unit_test.runTest<TLE_1>();
-    unit_test.runTest<TLE_2>();
+    libtest::unit_test<libtest::a_plus_b> test{5, 5};  // smallを5ケース, largeを5ケース生成
+    const bool silent = true;
+    test.run_test<ac>(silent);
+    test.run_test<wa>(silent);
+    test.run_test<tle_soft>(silent);
+    test.run_test<tle_hard>(silent);
 }

@@ -14,11 +14,11 @@ CIで使いやすいように、入出力自動生成＋自動テストみたい
 愚直解による出力生成を行うかどうかでテストをsmall,largeに区別する(largeは出力生成しない)。  
 入力検証は行わない(C++専用だし細かいことは気にしない)。
 
-1. Problem::generateInputSmall でsmall入力を生成
-2. Problem::generateOutputSmall でsmall出力を生成
-3. Problem::generateInputLarge でlarge入力を生成
+1. Problem::generate_input_small でsmall入力を生成
+2. Problem::generate_output_small でsmall出力を生成
+3. Problem::generate_input_large でlarge入力を生成
 4. `${case}.in`を提出解(?)に入力して実行
-5. 対応する`${case}.out`があれば Problem::validateOutput で検証
+5. 対応する`${case}.out`があれば Problem::validate_output で検証
 
 ## 問題の記述
 
@@ -52,15 +52,16 @@ CIで使いやすいように、入出力自動生成＋自動テストみたい
 `libtest/{problem_dir}/test_cases`直下に`{casename}.in`と`{casename}.out`を追加すれば良い。  
 出力検証が必要なければ、`{casename}.out`は不要
 
-
 ## ログ出力の制御
 
 `std::unique_ptr<Logger> g_logger_ptr`がログを担当しているので、これを解法ファイル内などでいじると良い。  
 直接いじるより以下のラッパーを使ったほうが安全そう。
 
-- `libtest::muteLog()`: ログ出力をOFF
-- `libtest::unmuteLog()`: ログ出力をON
-- `libtest::redirectLog(std::ostream& os)`: ログ出力先を`os`に変更。デフォルトは`std::cout`
+- `libtest::mute_log()`: ログ出力をOFF
+- `libtest::unmute_log()`: ログ出力をON
+- `libtest::redirect_log(std::ostream& os)`: ログ出力先を`os`に変更。デフォルトは`std::cout`
+
+また、テストの実行関数`unit_test::run_test(silent)`を引数に`true`を渡して実行するとテスト途中経過を非表示にできる。
 
 ## 注意点
 
