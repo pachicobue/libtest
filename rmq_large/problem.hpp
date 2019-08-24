@@ -3,11 +3,11 @@
 
 #include "../utils/random.hpp"
 namespace libtest {
-struct rmq
+struct rmq_large
 {
-    static constexpr const char* path       = "rmq";
-    static constexpr const char* name       = "Range Minimum Query";
-    static constexpr std::size_t time_limit = 2000;
+    static constexpr const char* path       = "rmq_large";
+    static constexpr const char* name       = "Range Minimum Query (Large)";
+    static constexpr std::size_t time_limit = 3000;
     using T                                 = ll;
     static void generate_input_small(std::ofstream& input_file)
     {
@@ -15,12 +15,8 @@ struct rmq
         constexpr usize q_min = small_constraints::q_min, q_max = small_constraints::q_max;
         constexpr T v_min = small_constraints::v_min, v_max = small_constraints::v_max;
         const usize n = g_rng.uniform_int(n_min, n_max);
-        const auto vs = g_rng.uniform_int_vec(n, v_min, v_max);
         const usize q = g_rng.uniform_int(q_min, q_max);
-        input_file << n << "\n";
-        for (usize i = 0; i < n; i++) { input_file << vs[i] << " "; }
-        input_file << "\n"
-                   << q << "\n";
+        input_file << n << " " << q << "\n";
         for (usize i = 0; i < q; i++) {
             const usize type = g_rng.uniform_int(0UL, 2UL);
             if (type == 0) {
@@ -39,12 +35,8 @@ struct rmq
         constexpr usize q_min = large_constraints::q_min, q_max = large_constraints::q_max;
         constexpr T v_min = large_constraints::v_min, v_max = large_constraints::v_max;
         const usize n = g_rng.uniform_int(n_min, n_max);
-        const auto vs = g_rng.uniform_int_vec(n, v_min, v_max);
         const usize q = g_rng.uniform_int(q_min, q_max);
-        input_file << n << "\n";
-        for (usize i = 0; i < n; i++) { input_file << vs[i] << " "; }
-        input_file << "\n"
-                   << q << "\n";
+        input_file << n << " " << q << "\n";
         for (usize i = 0; i < q; i++) {
             const usize type = g_rng.uniform_int(0UL, 2UL);
             if (type == 0) {
@@ -61,8 +53,7 @@ struct rmq
     {
         usize n;
         input_file >> n;
-        std::vector<T> vs(n);
-        for (auto& e : vs) { input_file >> e; }
+        std::vector<T> vs(n, std::numeric_limits<T>::max());
         usize q;
         input_file >> q;
         std::vector<T> ans;
@@ -112,7 +103,7 @@ struct rmq
     };
     struct large_constraints
     {
-        static constexpr usize n_min = 1, n_max = 100000;
+        static constexpr usize n_min = 1, n_max = 1000000000;
         static constexpr usize q_min = 1, q_max = 100000;
         static constexpr T v_min = -1000000000, v_max = 1000000000;
     };

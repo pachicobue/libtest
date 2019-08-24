@@ -23,7 +23,7 @@ struct rsq
                    << q << "\n";
         for (usize i = 0; i < q; i++) {
             const usize type = g_rng.uniform_int(0UL, 2UL);
-            if (type == 0 or i == q - 1) {
+            if (type == 0) {
                 input_file << "0 " << g_rng.uniform_int(0UL, n - 1) << "\n";
             } else if (type == 1) {
                 input_file << "1 " << g_rng.uniform_int(0UL, n - 1) << " " << g_rng.uniform_int(v_min, v_max) << "\n";
@@ -47,7 +47,7 @@ struct rsq
                    << q << "\n";
         for (usize i = 0; i < q; i++) {
             const usize type = g_rng.uniform_int(0UL, 2UL);
-            if (type == 0 or i == q - 1) {
+            if (type == 0) {
                 input_file << "0 " << g_rng.uniform_int(0UL, n - 1) << "\n";
             } else if (type == 1) {
                 input_file << "1 " << g_rng.uniform_int(0UL, n - 1) << " " << g_rng.uniform_int(v_min, v_max) << "\n";
@@ -112,8 +112,8 @@ struct rsq
     };
     struct large_constraints
     {
-        static constexpr usize n_min = 1, n_max = 300000;
-        static constexpr usize q_min = 1, q_max = 300000;
+        static constexpr usize n_min = 1, n_max = 100000;
+        static constexpr usize q_min = 1, q_max = 100000;
         static constexpr T v_min = -1000000000, v_max = 1000000000;
     };
 };
