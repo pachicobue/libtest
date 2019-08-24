@@ -31,7 +31,7 @@ public:
     static constexpr ansi_sgr reset{color::white, attr::reset};
     unit_test(const usize small_gen_num, const usize large_gen_num) : small_gen_num{small_gen_num}, large_gen_num{large_gen_num}, testcase_dir{fs::path(LIBTEST_ROOT) / std::string(problem_type::path) / "test_cases"}, gen_case_dir{testcase_dir / "generated"} {}
     template<typename Solution>
-    bool run_test(const bool testcase_cache = true)
+    bool run_test(const bool testcase_cache = false)
     {
         *g_logger_ptr << base_color << "[==========] " << reset << bold_message_color << "Start (problem=\"" << problem_type::name << "\",solution=\"" << Solution::name << "\")" << reset << std::endl;
         gen(testcase_cache);
