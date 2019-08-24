@@ -63,6 +63,5 @@ int main()
     test.run_test<ac>();
     test.run_test<wa>();
     test.run_test<tle_soft>();
-    test.run_test<tle_soft>(silent);
     test.run_test<tle_hard>();
 }
