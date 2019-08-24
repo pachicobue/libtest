@@ -4,6 +4,8 @@
  * 本来はlibtestにはproblem.hppのような問題だけ置き、solutionはライブラリ側で実装する
  * ライブラリを用いて解法を実装、テストする方法を例示する
  */
+#include <cassert>
+
 #include "../utils/logger.hpp"
 #include "../utils/unit_test.hpp"
 #include "problem.hpp"
@@ -58,9 +60,9 @@ struct tle_hard
 int main()
 {
     libtest::unit_test<libtest::a_plus_b> test{5, 5};  // smallを5ケース, largeを5ケース生成
-    const bool silent = true;
-    test.run_test<ac>(silent);
-    test.run_test<wa>(silent);
+    test.run_test<ac>();
+    test.run_test<wa>();
+    test.run_test<tle_soft>();
     test.run_test<tle_soft>(silent);
-    test.run_test<tle_hard>(silent);
+    test.run_test<tle_hard>();
 }
