@@ -112,8 +112,8 @@ struct rmq
     };
     struct large_constraints
     {
-        static constexpr int n_min = 1, n_max = 300000;
-        static constexpr int q_min = 1, q_max = 300000;
+        static constexpr usize n_min = 1, n_max = 300000;
+        static constexpr usize q_min = 1, q_max = 300000;
         static constexpr T v_min = -1000000000, v_max = 1000000000;
     };
 };
