@@ -16,19 +16,19 @@ public:
     template<typename Real>
     Real uniform_real(const Real min, const Real max) { return std::uniform_real_distribution<Real>{min, max}(mt); }
     template<typename Int>
-    std::pair<Int, Int> uniform_int_pair(const Int min, const Int max) { return std::minmax(uniformInt(min, max), uniformInt(min, max)); }
+    std::pair<Int, Int> uniform_int_pair(const Int min, const Int max) { return std::minmax(uniform_int(min, max), uniform_int(min, max)); }
     template<typename Int>
-    std::vector<Int> uniform_int_vec(const std::size_t N, const Int min, const Int max)
+    std::vector<Int> uniform_int_vec(const usize N, const Int min, const Int max)
     {
         std::vector<Int> v(N);
-        for (std::size_t i = 0; i < N; i++) { v[i] = uniformInt(min, max); }
+        for (usize i = 0; i < N; i++) { v[i] = uniform_int(min, max); }
         return v;
     }
     template<typename Real>
-    std::vector<Real> uniform_real_vec(const std::size_t N, const Real min, const Real max)
+    std::vector<Real> uniform_real_vec(const usize N, const Real min, const Real max)
     {
         std::vector<Real> v(N);
-        for (std::size_t i = 0; i < N; i++) { v[i] = uniformReal(min, max); }
+        for (usize i = 0; i < N; i++) { v[i] = uniform_real(min, max); }
         return v;
     }
 
