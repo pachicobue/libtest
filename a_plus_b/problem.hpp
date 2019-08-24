@@ -41,7 +41,7 @@ struct a_plus_b  // なんでも良い
 
     /**
      * 制約を表す構造体(必須ではない)
-     * generateInputSmall,generateOutputLargeの実装で使うと良い
+     * generate_input_small,generate_output_largeの実装で使うと良い
      */
     struct small_constranits
     {
