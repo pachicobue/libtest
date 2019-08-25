@@ -42,7 +42,7 @@ public:
         if (failed > 0) { *g_logger_ptr << failed_color << "[  FAILED  ] " << reset << message_color << failed << " cases" << reset << std::endl; }
         *g_logger_ptr << base_color << "[==========] " << reset << bold_message_color << "End (problem=\"" << problem_type::name << "\",solution=\"" << Solution::name << "\")" << reset << std::endl;
         *g_logger_ptr << std::endl;
-        return passed;
+        return failed == 0;
     }
 
 private:
