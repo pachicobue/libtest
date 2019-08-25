@@ -6,14 +6,13 @@ namespace libtest {
 struct rsq_large
 {
     static constexpr const char* path       = "rsq_large";
-    static constexpr const char* name       = "Range Minimum Query (Large)";
+    static constexpr const char* name       = "Range Sum Query (Large)";
     static constexpr std::size_t time_limit = 3000;
-    using T                                 = ll;
     static void generate_input_small(std::ofstream& input_file)
     {
         constexpr usize n_min = small_constraints::n_min, n_max = small_constraints::n_max;
         constexpr usize q_min = small_constraints::q_min, q_max = small_constraints::q_max;
-        constexpr T v_min = small_constraints::v_min, v_max = small_constraints::v_max;
+        constexpr ll v_min = small_constraints::v_min, v_max = small_constraints::v_max;
         const usize n = g_rng.uniform_int(n_min, n_max);
         const usize q = g_rng.uniform_int(q_min, q_max);
         input_file << n << " " << q << "\n";
@@ -33,7 +32,7 @@ struct rsq_large
     {
         constexpr usize n_min = large_constraints::n_min, n_max = large_constraints::n_max;
         constexpr usize q_min = large_constraints::q_min, q_max = large_constraints::q_max;
-        constexpr T v_min = large_constraints::v_min, v_max = large_constraints::v_max;
+        constexpr ll v_min = large_constraints::v_min, v_max = large_constraints::v_max;
         const usize n = g_rng.uniform_int(n_min, n_max);
         const usize q = g_rng.uniform_int(q_min, q_max);
         input_file << n << " " << q << "\n";
@@ -53,10 +52,10 @@ struct rsq_large
     {
         usize n;
         input_file >> n;
-        std::vector<T> vs(n, 0);
+        std::vector<ll> vs(n, 0);
         usize q;
         input_file >> q;
-        std::vector<T> ans;
+        std::vector<ll> ans;
         for (usize i = 0; i < q; i++) {
             usize type;
             input_file >> type;
@@ -66,13 +65,13 @@ struct rsq_large
                 ans.push_back(vs[i]);
             } else if (type == 1) {
                 usize i;
-                T v;
+                ll v;
                 input_file >> i >> v;
                 vs[i] = v;
             } else {
                 usize l, r;
                 input_file >> l >> r;
-                T sum = 0;
+                ll sum = 0;
                 for (usize i = l; i < r; i++) { sum += vs[i]; }
                 ans.push_back(sum);
             }
@@ -87,7 +86,7 @@ struct rsq_large
         solution_output_file >> q_output;
         if (q_actual != q_output) { return false; }
         for (usize i = 0; i < q_actual; i++) {
-            T actual, output;
+            ll actual, output;
             generated_output_file >> actual;
             solution_output_file >> output;
             if (actual != output) { return false; }
@@ -99,13 +98,13 @@ struct rsq_large
     {
         static constexpr usize n_min = 1, n_max = 100;
         static constexpr usize q_min = 1, q_max = 100;
-        static constexpr int v_min = -100, v_max = 100;
+        static constexpr ll v_min = -100, v_max = 100;
     };
     struct large_constraints
     {
         static constexpr usize n_min = 1, n_max = 1000000000;
         static constexpr usize q_min = 1, q_max = 100000;
-        static constexpr T v_min = -1000000000, v_max = 1000000000;
+        static constexpr ll v_min = -1000000000, v_max = 1000000000;
     };
 };
 }  // namespace libtest
