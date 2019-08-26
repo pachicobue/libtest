@@ -14,11 +14,11 @@ CIで使いやすいように、入出力自動生成＋自動テストみたい
 愚直解による出力生成を行うかどうかでテストをsmall,largeに区別する(largeは出力生成しない)。  
 入力検証は行わない(C++専用だし細かいことは気にしない)。
 
-1. Problem::generate_input\<Problem::small_constraint\> でsmall入力を生成
-2. Problem::generate_output でsmall出力を生成
-3. Problem::generate_input\<Problem::large_constraint\> でlarge入力を生成
-4. `${case}.in`を提出解(?)に入力して実行
-5. 対応する`${case}.out`があれば Problem::judge で検証
+1. `Problem::generate_input<Problem::small_constraint>` でsmall入力を生成
+2. `Problem::generate_output` で想定出力(small)を生成
+3. `Problem::generate_input<Problem::large_constraint>` でlarge入力を生成
+4. `Solution::solve`に`${case}.in`を入力して実行して出力を生成
+5. 対応する`${case}.out`があれば `Problem::judge` で検証
 
 ## 問題の記述
 
