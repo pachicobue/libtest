@@ -8,10 +8,11 @@ struct segments
     static constexpr const char* path       = "segments";
     static constexpr const char* name       = "Segments Decomposition";
     static constexpr std::size_t time_limit = 2000;
-    static void generate_input_small(std::ofstream& input_file)
+    template<typename constraints>
+    static void generate_input(std::ofstream& input_file)
     {
-        constexpr usize n_min = small_constraints::n_min, n_max = small_constraints::n_max;
-        constexpr usize q_min = small_constraints::q_min, q_max = small_constraints::q_max;
+        constexpr usize n_min = constraints::n_min, n_max = constraints::n_max;
+        constexpr usize q_min = constraints::q_min, q_max = constraints::q_max;
         const usize n = g_rng.uniform_int(n_min, n_max);
         const usize q = g_rng.uniform_int(q_min, q_max);
         usize sz      = 1;
@@ -29,28 +30,7 @@ struct segments
             }
         }
     }
-    static void generate_input_large(std::ofstream& input_file)
-    {
-        constexpr usize n_min = large_constraints::n_min, n_max = large_constraints::n_max;
-        constexpr usize q_min = large_constraints::q_min, q_max = large_constraints::q_max;
-        const usize n = g_rng.uniform_int(n_min, n_max);
-        const usize q = g_rng.uniform_int(q_min, q_max);
-        usize sz      = 1;
-        for (; sz < n; sz <<= 1) {}
-        input_file << n << " " << q << "\n";
-        for (usize i = 0; i < q; i++) {
-            const usize type = g_rng.uniform_int(0UL, 2UL);
-            if (type == 0) {
-                const auto p = g_rng.uniform_int_pair(0UL, n - 1);
-                input_file << "0 " << p.first << " " << p.second + 1 << "\n";
-            } else if (type == 1) {
-                input_file << "1 " << g_rng.uniform_int(0UL, n - 1) << "\n";
-            } else {
-                input_file << "2 " << g_rng.uniform_int(1UL, sz * 2 - 1) << "\n";
-            }
-        }
-    }
-    static void generate_output_small(std::ifstream& input_file, std::ofstream& output_file)
+    static void generate_output(std::ifstream& input_file, std::ofstream& output_file)
     {
         usize n, q;
         input_file >> n >> q;
@@ -103,7 +83,7 @@ struct segments
             output_file << "\n";
         }
     }
-    static bool validate_output(std::ifstream& /* input_file */, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
+    static bool judge(std::ifstream& /* input_file */, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
     {
         usize q_actual, q_output;
         generated_output_file >> q_actual;

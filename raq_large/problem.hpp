@@ -8,11 +8,12 @@ struct raq_large
     static constexpr const char* path       = "raq_large";
     static constexpr const char* name       = "Range Add Query (Large)";
     static constexpr std::size_t time_limit = 2000;
-    static void generate_input_small(std::ofstream& input_file)
+    template<typename constraints>
+    static void generate_input(std::ofstream& input_file)
     {
-        constexpr usize n_min = small_constraints::n_min, n_max = small_constraints::n_max;
-        constexpr usize q_min = small_constraints::q_min, q_max = small_constraints::q_max;
-        constexpr ll v_min = small_constraints::v_min, v_max = small_constraints::v_max;
+        constexpr usize n_min = constraints::n_min, n_max = constraints::n_max;
+        constexpr usize q_min = constraints::q_min, q_max = constraints::q_max;
+        constexpr ll v_min = constraints::v_min, v_max = constraints::v_max;
         const usize n = g_rng.uniform_int(n_min, n_max);
         const auto vs = g_rng.uniform_int_vec(n, v_min, v_max);
         const usize q = g_rng.uniform_int(q_min, q_max);
@@ -29,28 +30,7 @@ struct raq_large
             }
         }
     }
-    static void generate_input_large(std::ofstream& input_file)
-    {
-        constexpr usize n_min = large_constraints::n_min, n_max = large_constraints::n_max;
-        constexpr usize q_min = large_constraints::q_min, q_max = large_constraints::q_max;
-        constexpr ll v_min = large_constraints::v_min, v_max = large_constraints::v_max;
-        const usize n = g_rng.uniform_int(n_min, n_max);
-        const auto vs = g_rng.uniform_int_vec(n, v_min, v_max);
-        const usize q = g_rng.uniform_int(q_min, q_max);
-        input_file << n << " " << q << "\n";
-        for (usize i = 0; i < q; i++) {
-            const usize type = g_rng.uniform_int(0UL, 2UL);
-            if (type == 0) {
-                input_file << "0 " << g_rng.uniform_int(0UL, n - 1) << "\n";
-            } else if (type == 1) {
-                input_file << "1 " << g_rng.uniform_int(0UL, n - 1) << " " << g_rng.uniform_int(v_min, v_max) << "\n";
-            } else {
-                const auto p = g_rng.uniform_int_pair(0UL, n - 1);
-                input_file << "2 " << p.first << " " << p.second + 1 << " " << g_rng.uniform_int(v_min, v_max) << "\n";
-            }
-        }
-    }
-    static void generate_output_small(std::ifstream& input_file, std::ofstream& output_file)
+    static void generate_output(std::ifstream& input_file, std::ofstream& output_file)
     {
         usize n;
         input_file >> n;
@@ -80,7 +60,7 @@ struct raq_large
         output_file << ans.size() << "\n";
         for (const auto e : ans) { output_file << e << "\n"; }
     }
-    static bool validate_output(std::ifstream& /* input_file */, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
+    static bool judge(std::ifstream& /* input_file */, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
     {
         usize q_actual, q_output;
         generated_output_file >> q_actual;

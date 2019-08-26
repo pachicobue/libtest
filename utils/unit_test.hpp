@@ -80,10 +80,10 @@ private:
             if (testcase_cache and fs::exists(input_file_path)) { continue; }
             *g_logger_ptr << ac_color << "[ GENERATE ] " << reset << message_color << input_file_path.filename() << reset << std::endl;
             input_file.open(input_file_path);
-            problem_type::generate_input_small(input_file);
+            problem_type::template generate_input<typename problem_type::small_constraints>(input_file);
             input_file.close(), output_file.open(input_file_path), input_file.open(output_file_path);
             *g_logger_ptr << ac_color << "[ GENERATE ] " << reset << message_color << output_file_path.filename() << reset << std::endl;
-            problem_type::generate_output_small(output_file, input_file);
+            problem_type::generate_output(output_file, input_file);
             input_file.close(), output_file.close();
         }
         for (usize index = 1; index <= large_gen_num; index++) {
@@ -91,7 +91,7 @@ private:
             if (testcase_cache and fs::exists(input_file_path)) { continue; }
             *g_logger_ptr << ac_color << "[ GENERATE ] " << reset << message_color << input_file_path.filename() << reset << std::endl;
             input_file.open(input_file_path);
-            problem_type::generate_input_large(input_file);
+            problem_type::template generate_input<typename problem_type::large_constraints>(input_file);
             input_file.close();
         }
     }
@@ -119,7 +119,7 @@ private:
             generated_out_path.replace_extension(".out");
             if (fs::exists(generated_out_path)) {
                 input_file.open(input_file_path), generated_output_file.open(generated_out_path), solution_output_file_in.open(solution_out_path);
-                const bool ok = problem_type::validate_output(input_file, generated_output_file, solution_output_file_in);
+                const bool ok = problem_type::judge(input_file, generated_output_file, solution_output_file_in);
                 if (not ok) {
                     *g_logger_ptr << wa_color << "[       WA ] " << reset << message_color << input_file_path.filename() << " (" << time_ms << " ms)" << reset << std::endl;
                 } else {
