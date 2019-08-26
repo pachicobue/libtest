@@ -16,7 +16,7 @@ public:
     template<typename Real>
     Real uniform_real(const Real min, const Real max) { return std::uniform_real_distribution<Real>{min, max}(mt); }
     template<typename Int>
-    std::pair<Int, Int> uniform_int_pair(const Int min, const Int max) { return std::minmax(uniform_int(min, max), uniform_int(min, max)); }
+    std::pair<Int, Int> uniform_int_pair(const Int min, const Int max, const bool sorted = true) { return sorted ? std::minmax(uniform_int(min, max), uniform_int(min, max)) : std::pair<const Int&, const Int&>{uniform_int(min, max), uniform_int(min, max)}; }
     template<typename Int>
     std::vector<Int> uniform_int_vec(const usize N, const Int min, const Int max)
     {
