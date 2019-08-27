@@ -42,7 +42,7 @@ struct slide_min
         scanner in_sc(input_file), gen_sc(generated_output_file), sol_sc(solution_output_file);
         const auto n   = in_sc.read<usize>();
         const auto gen = gen_sc.read_vec<ll>(n);
-        const auto sol = gen_sc.safe_read_vec<ll>(n);
+        const auto sol = gen_sc.may_read_vec<ll>(n);
         for (usize i = 0; i < n; i++) {
             if (gen[i] != sol[i]) { return false; }
         }

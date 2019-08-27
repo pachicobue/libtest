@@ -47,7 +47,7 @@ struct dquery
         const auto [n, q] = in_sc.read_vals<usize, usize>();
         for (usize i = 0; i < q; i++) {
             const auto gen = gen_sc.read<usize>();
-            const auto sol = sol_sc.safe_read<usize>();
+            const auto sol = sol_sc.may_read<usize>();
             if (gen != sol) { return false; }
         }
         return true;

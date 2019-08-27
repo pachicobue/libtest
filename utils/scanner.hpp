@@ -29,20 +29,20 @@ public:
         return v;
     }
     template<typename T>
-    auto safe_read()
+    auto may_read()
     {
         T v;
         return ((is >> v) ? std::make_optional(v) : std::nullopt);
     }
     template<typename... Types>
-    auto safe_read_vals() { return std::tuple<std::optional<std::decay_t<Types>>...>{safe_read<Types>()...}; }
+    auto may_read_vals() { return std::tuple<std::optional<std::decay_t<Types>>...>{may_read<Types>()...}; }
     template<typename T>
-    auto safe_read_vec() { return safe_read<T>(); }
+    auto may_read_vec() { return may_read<T>(); }
     template<typename T, typename... Args>
-    auto safe_read_vec(const usize n, Args... args)
+    auto may_read_vec(const usize n, Args... args)
     {
-        std::vector<decltype(safe_read_vec<T>(args...))> v;
-        for (usize i = 0; i < n; i++) { v.push_back(safe_read_vec<T>(args...)); }
+        std::vector<decltype(may_read_vec<T>(args...))> v;
+        for (usize i = 0; i < n; i++) { v.push_back(may_read_vec<T>(args...)); }
         return v;
     }
 

@@ -71,10 +71,10 @@ struct unionfind
                 in_sc.read_vals<usize, usize>();
             } else if (type == 1) {
                 in_sc.read_vals<usize, usize>();
-                if (gen_sc.read<usize>() != sol_sc.safe_read<usize>()) { return false; }
+                if (gen_sc.read<usize>() != sol_sc.may_read<usize>()) { return false; }
             } else {
                 in_sc.read<usize>();
-                if (gen_sc.read<usize>() != sol_sc.safe_read<usize>()) { return false; }
+                if (gen_sc.read<usize>() != sol_sc.may_read<usize>()) { return false; }
             }
         }
         return true;

@@ -43,7 +43,7 @@ struct static_rmq
         scanner in_sc(input_file), gen_sc(generated_output_file), sol_sc(solution_output_file);
         const auto [n, q] = in_sc.read_vals<usize, usize>();
         for (usize i = 0; i < q; i++) {
-            if (gen_sc.read<ll>() != sol_sc.safe_read<ll>()) { return false; }
+            if (gen_sc.read<ll>() != sol_sc.may_read<ll>()) { return false; }
         }
         return true;
     }

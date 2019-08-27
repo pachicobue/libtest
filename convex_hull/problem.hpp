@@ -60,7 +60,7 @@ struct convex_hull
             } else {
                 in_sc.read<ll>();
                 const auto [gen_b, gen_y] = gen_sc.read_vals<bool, ll>();
-                const auto [sol_b, sol_y] = sol_sc.safe_read_vals<bool, ll>();
+                const auto [sol_b, sol_y] = sol_sc.may_read_vals<bool, ll>();
                 if (gen_b != sol_b) { return false; }
                 if (gen_b) {
                     if (gen_y != sol_y) { return false; }

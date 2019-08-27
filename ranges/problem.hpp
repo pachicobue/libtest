@@ -73,11 +73,11 @@ struct ranges
             } else {
                 in_sc.read<ll>();
                 const auto gen_b = gen_sc.read<bool>();
-                const auto sol_b = sol_sc.safe_read<bool>();
+                const auto sol_b = sol_sc.may_read<bool>();
                 if (gen_b != sol_b) { return false; }
                 if (gen_b) {
                     const auto [gen_l, gen_r] = gen_sc.read_vals<ll, ll>();
-                    const auto [sol_l, sol_r] = sol_sc.safe_read_vals<ll, ll>();
+                    const auto [sol_l, sol_r] = sol_sc.may_read_vals<ll, ll>();
                     if (gen_l != sol_l or gen_r != sol_r) { return false; }
                 }
             }

@@ -48,7 +48,7 @@ struct range_freq
         const auto q = in_sc.read<usize>();
         for (usize i = 0; i < q; i++) {
             const auto gen_c = gen_sc.read<usize>();
-            const auto sol_c = gen_sc.safe_read<usize>();
+            const auto sol_c = gen_sc.may_read<usize>();
             if (gen_c != sol_c) { return false; }
         }
         return true;

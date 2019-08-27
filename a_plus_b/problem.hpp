@@ -40,7 +40,7 @@ struct a_plus_b  // なんでも良い
     static bool judge(std::ifstream& /* input_file */, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
     {
         scanner gen_sc(generated_output_file), sol_sc(solution_output_file);
-        return gen_sc.read<int>() == sol_sc.safe_read<int>();
+        return gen_sc.read<int>() == sol_sc.may_read<int>();
     }
     /**
      * 制約を表す構造体

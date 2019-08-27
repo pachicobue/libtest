@@ -44,7 +44,7 @@ struct assignment
         const auto n     = in_sc.read<usize>();
         const auto cost  = in_sc.read_vec<ll>(n, n);
         const auto gen_v = gen_sc.read_vec<usize>(n);
-        const auto sol_v = sol_sc.safe_read_vec<usize>(n);
+        const auto sol_v = sol_sc.may_read_vec<usize>(n);
         if (not sol_v.back()) { return false; }
         ll gen_cost = 0, sol_cost = 0;
         for (usize i = 0; i < n; i++) { gen_cost += cost[i][gen_v[i]], sol_cost += cost[i][*sol_v[i]]; }

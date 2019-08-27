@@ -79,17 +79,17 @@ struct pot_unionfind
             } else if (type == 1) {
                 in_sc.read_vals<usize, usize>();
                 const auto gen_b = gen_sc.read<usize>();
-                const auto sol_b = sol_sc.safe_read<usize>();
+                const auto sol_b = sol_sc.may_read<usize>();
                 if (gen_b != sol_b) { return false; }
                 if (gen_b) {
                     const auto gen_p = gen_sc.read<ll>();
-                    const auto sol_p = sol_sc.safe_read<ll>();
+                    const auto sol_p = sol_sc.may_read<ll>();
                     if (gen_p != sol_p) { return false; }
                 }
             } else {
                 in_sc.read<usize>();
                 const auto gen_s = gen_sc.read<usize>();
-                const auto sol_s = sol_sc.safe_read<usize>();
+                const auto sol_s = sol_sc.may_read<usize>();
                 if (gen_s != sol_s) { return false; }
             }
         }

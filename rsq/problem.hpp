@@ -62,12 +62,12 @@ struct rsq
             const auto type = in_sc.read<usize>();
             if (type == 0) {
                 in_sc.read<usize>();
-                if (gen_sc.read<ll>() != sol_sc.safe_read<ll>()) { return false; }
+                if (gen_sc.read<ll>() != sol_sc.may_read<ll>()) { return false; }
             } else if (type == 1) {
                 in_sc.read_vals<usize, ll>();
             } else {
                 in_sc.read_vals<usize, usize>();
-                if (gen_sc.read<ll>() != sol_sc.safe_read<ll>()) { return false; }
+                if (gen_sc.read<ll>() != sol_sc.may_read<ll>()) { return false; }
             }
         }
         return true;
