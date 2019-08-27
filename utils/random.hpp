@@ -21,8 +21,26 @@ public:
     }
     template<typename T>
     std::pair<T, T> gen_pair(const T min, const T max) { return std::minmax(gen(min, max), gen(min, max)); }
+    template<typename T>
+    T gen_prime(const T min, const T max)
+    {
+        for (usize i = 0; i < 10000; i++) {
+            const auto n = gen(min, max);
+            if (isprime(n)) { return n; }
+        }
+        return 0;
+    }
 
 private:
+    template<typename T>
+    bool isprime(const T n)
+    {
+        for (T i = 2; i * i <= n; i++) {
+            if (n % i == 0) { return false; }
+        }
+        return true;
+    }
+
     std::mt19937_64 mt;
 } rng;
 }  // namespace libtest
