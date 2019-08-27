@@ -51,7 +51,7 @@ CIで使いやすいように、入出力自動生成＋自動テストみたい
 ## 手生成のテストケース追加
 
 `libtest/{problem_dir}/test_cases`直下に`{casename}.in`と`{casename}.out`を追加すれば良い。  
-出力検証が必要なければ、`{casename}.out`は不要
+最悪ケースでのベンチマークなど出力検証が必要ないケースならば、`{casename}.out`は不要
 
 ## ログ出力の制御
 
@@ -62,7 +62,7 @@ CIで使いやすいように、入出力自動生成＋自動テストみたい
 - `libtest::unmute_log()`: ログ出力をON
 - `libtest::redirect_log(std::ostream& os)`: ログ出力先を`os`に変更。デフォルトは`std::cout`
 
-また、テストの実行関数`unit_test::run_test(silent)`を引数に`true`を渡して実行するとテスト途中経過を非表示にできる。
+また、テストの実行関数`unit_test::run_test(cache)`を引数に`true`を渡して実行するとテストケース生成をサボる(過去のものを利用する)。
 
 ## 注意点
 
