@@ -51,11 +51,7 @@ struct pot_unionfind
                 }
             } else if (type == 1) {
                 const auto [a, b] = sc.read_vals<usize, usize>();
-                if (id[a] == id[b]) {
-                    pr.println(id[a] == id[b], pot[b] - pot[a]);
-                } else {
-                    pr.println(id[a] == id[b]);
-                }
+                pr.println(id[a] == id[b], pot[b] - pot[a]);
             } else {
                 const auto ind = sc.read<usize>();
                 usize sum      = 0;
@@ -78,13 +74,11 @@ struct pot_unionfind
                 in_sc.read_vals<usize, usize, ll>();
             } else if (type == 1) {
                 in_sc.read_vals<usize, usize>();
-                const auto gen_b = gen_sc.read<usize>();
-                const auto sol_b = sol_sc.may_read<usize>();
+                const auto [gen_b, gen_d] = gen_sc.read_vals<bool, ll>();
+                const auto [sol_b, sol_d] = sol_sc.may_read_vals<bool, ll>();
                 if (gen_b != sol_b) { return false; }
                 if (gen_b) {
-                    const auto gen_p = gen_sc.read<ll>();
-                    const auto sol_p = sol_sc.may_read<ll>();
-                    if (gen_p != sol_p) { return false; }
+                    if (gen_d != sol_d) { return false; }
                 }
             } else {
                 in_sc.read<usize>();

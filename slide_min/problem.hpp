@@ -28,22 +28,19 @@ struct slide_min
         printer pr(output_file);
         const auto [n, k] = sc.read_vals<usize, usize>();
         const auto a      = sc.read_vec<ll>(n);
-        std::vector<ll> min(n);
-        for (usize r = 0; r < k - 1; r++) {
-            min[r] = std::accumulate(a.begin(), a.begin() + r + 1, std::numeric_limits<ll>::max(), [](const ll a, const ll b) { return std::min(a, b); });
-        }
+        std::vector<ll> min(n - k + 1);
         for (usize l = 0; l <= n - k; l++) {
-            min[l + k - 1] = std::accumulate(a.begin() + l, a.begin() + l + k, std::numeric_limits<ll>::max(), [](const ll a, const ll b) { return std::min(a, b); });
+            min[l] = std::accumulate(a.begin() + l, a.begin() + l + k, std::numeric_limits<ll>::max(), [](const ll a, const ll b) { return std::min(a, b); });
         }
         pr.println(min);
     }
     static bool judge(std::ifstream& input_file, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
     {
         scanner in_sc(input_file), gen_sc(generated_output_file), sol_sc(solution_output_file);
-        const auto n   = in_sc.read<usize>();
-        const auto gen = gen_sc.read_vec<ll>(n);
-        const auto sol = gen_sc.may_read_vec<ll>(n);
-        for (usize i = 0; i < n; i++) {
+        const auto [n, k] = in_sc.read_vals<usize, usize>();
+        const auto gen    = gen_sc.read_vec<ll>(n - k + 1);
+        const auto sol    = sol_sc.may_read_vec<ll>(n - k + 1);
+        for (usize i = 0; i < n - k + 1; i++) {
             if (gen[i] != sol[i]) { return false; }
         }
         return true;

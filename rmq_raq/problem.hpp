@@ -56,7 +56,7 @@ struct rmq_raq
                 pr.println(std::accumulate(vs.begin() + l, vs.begin() + r, std::numeric_limits<ll>::max(), [](const ll a, const ll b) { return std::min(a, b); }));
             } else {
                 const auto [l, r, v] = sc.read_vals<usize, usize, ll>();
-                for (usize i = l; i < r; i++) { vs[i] = v; }
+                for (usize i = l; i < r; i++) { vs[i] += v; }
             }
         }
     }
@@ -64,6 +64,7 @@ struct rmq_raq
     {
         scanner in_sc(input_file), gen_sc(generated_output_file), sol_sc(solution_output_file);
         const auto [n, q] = in_sc.read_vals<usize, usize>();
+        const auto vs     = in_sc.read_vec<ll>(n);
         for (usize i = 0; i < q; i++) {
             const auto type = in_sc.read<usize>();
             if (type == 0) {

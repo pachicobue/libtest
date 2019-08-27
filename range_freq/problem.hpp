@@ -45,10 +45,10 @@ struct range_freq
     static bool judge(std::ifstream& input_file, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
     {
         scanner in_sc(input_file), gen_sc(generated_output_file), sol_sc(solution_output_file);
-        const auto q = in_sc.read<usize>();
+        const auto [n, q] = in_sc.read_vals<usize, usize>();
         for (usize i = 0; i < q; i++) {
             const auto gen_c = gen_sc.read<usize>();
-            const auto sol_c = gen_sc.may_read<usize>();
+            const auto sol_c = sol_sc.may_read<usize>();
             if (gen_c != sol_c) { return false; }
         }
         return true;

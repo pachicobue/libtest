@@ -41,14 +41,14 @@ struct raq_large
         for (usize i = 0; i < q; i++) {
             const auto type = sc.read<usize>();
             if (type == 0) {
-                const auto ind = sc.read<ll>();
+                const auto ind = sc.read<usize>();
                 pr.println(vs[ind - n_min]);
             } else if (type == 1) {
-                const auto [ind, v] = sc.read_vals<ll, ll>();
+                const auto [ind, v] = sc.read_vals<usize, ll>();
                 vs[ind - n_min]     = v;
             } else {
-                const auto [l, r, v] = sc.read_vals<ll, ll, ll>();
-                for (ll i = l; i < r; i++) { vs[i - n_min] += v; }
+                const auto [l, r, v] = sc.read_vals<usize, usize, ll>();
+                for (usize i = l; i < r; i++) { vs[i - n_min] += v; }
             }
         }
     }
@@ -59,12 +59,12 @@ struct raq_large
         for (usize i = 0; i < q; i++) {
             const auto type = in_sc.read<usize>();
             if (type == 0) {
-                in_sc.read<ll>();
+                in_sc.read<usize>();
                 if (gen_sc.read<ll>() != sol_sc.may_read<ll>()) { return false; }
             } else if (type == 1) {
-                in_sc.read_vals<ll, ll>();
+                in_sc.read_vals<usize, ll>();
             } else {
-                in_sc.read_vals<ll, ll, ll>();
+                in_sc.read_vals<usize, usize, ll>();
             }
         }
         return true;
@@ -72,13 +72,13 @@ struct raq_large
 
     struct small_constraints
     {
-        static constexpr ll n_min = 1, n_max = 100;
+        static constexpr usize n_min = 0, n_max = 100;
         static constexpr usize q_min = 1, q_max = 100;
         static constexpr ll v_min = -100, v_max = 100;
     };
     struct large_constraints
     {
-        static constexpr ll n_min = 1, n_max = 10000000;
+        static constexpr usize n_min = 0, n_max = 10000000;
         static constexpr usize q_min = 1, q_max = 1000;
         static constexpr ll v_min = -100000, v_max = 100000;
     };

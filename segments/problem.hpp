@@ -87,16 +87,20 @@ struct segments
                 const auto gen_m = gen_sc.read<usize>();
                 const auto sol_m = sol_sc.may_read<usize>();
                 if (gen_m != sol_m) { return false; }
+                const auto gen_v = gen_sc.read_vec<usize>(gen_m);
+                const auto sol_v = sol_sc.may_read_vec<usize>(*sol_m);
                 for (usize i = 0; i < gen_m; i++) {
-                    if (gen_sc.read<usize>() == sol_sc.may_read<usize>()) { return false; }
+                    if (gen_v[i] != sol_v[i]) { return false; }
                 }
             } else if (type == 1) {
                 in_sc.read_vals<usize>();
                 const auto gen_m = gen_sc.read<usize>();
                 const auto sol_m = sol_sc.may_read<usize>();
                 if (gen_m != sol_m) { return false; }
+                const auto gen_v = gen_sc.read_vec<usize>(gen_m);
+                const auto sol_v = sol_sc.may_read_vec<usize>(*sol_m);
                 for (usize i = 0; i < gen_m; i++) {
-                    if (gen_sc.read<usize>() == sol_sc.may_read<usize>()) { return false; }
+                    if (gen_v[i] != sol_v[i]) { return false; }
                 }
             } else {
                 in_sc.read_vals<usize>();

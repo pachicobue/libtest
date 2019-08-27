@@ -1,4 +1,5 @@
 #pragma once
+#include <cassert>
 #include <fstream>
 
 #include "../utils/printer.hpp"
@@ -58,6 +59,7 @@ struct rsq
     {
         scanner in_sc(input_file), gen_sc(generated_output_file), sol_sc(solution_output_file);
         const auto [n, q] = in_sc.read_vals<usize, usize>();
+        const auto vs     = in_sc.read_vec<ll>(n);
         for (usize i = 0; i < q; i++) {
             const auto type = in_sc.read<usize>();
             if (type == 0) {

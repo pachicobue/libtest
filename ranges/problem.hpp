@@ -33,12 +33,11 @@ struct ranges
     }
     static void generate_output(std::ifstream& input_file, std::ofstream& output_file)
     {
-        constexpr ll n_min = large_constraints::n_min, n_max = large_constraints::n_max;
+        constexpr ll n_min = small_constraints::n_min, n_max = small_constraints::n_max;
         scanner sc(input_file);
         printer pr(output_file);
         const auto q = sc.read<usize>();
-        pr.println(q);
-        std::vector<bool> on(n_max - n_min + 2, false);
+        std::vector<bool> on(n_max - n_min + 3, false);
         for (usize i = 0; i < q; i++) {
             const auto type = sc.read<usize>();
             if (type == 0) {
@@ -49,13 +48,13 @@ struct ranges
                 for (ll i = a; i < b; i++) { on[i - (n_min - 1)] = false; }
             } else {
                 const auto ind = sc.read<ll>();
-                if (on[ind]) {
+                if (on[ind - (n_min - 1)]) {
                     ll l = ind, r = ind;
                     for (; on[l - (n_min - 1)]; l--) {}
                     for (; on[r - (n_min - 1)]; r++) {}
-                    pr.println(on[ind], l + 1, r);
+                    pr.println(on[ind - (n_min - 1)], l + 1, r);
                 } else {
-                    pr.println(on[ind]);
+                    pr.println(on[ind - (n_min - 1)], 0, 0);
                 }
             }
         }
@@ -72,12 +71,10 @@ struct ranges
                 in_sc.read_vals<ll, ll>();
             } else {
                 in_sc.read<ll>();
-                const auto gen_b = gen_sc.read<bool>();
-                const auto sol_b = sol_sc.may_read<bool>();
+                const auto [gen_b, gen_l, gen_r] = gen_sc.read_vals<bool, ll, ll>();
+                const auto [sol_b, sol_l, sol_r] = sol_sc.may_read_vals<bool, ll, ll>();
                 if (gen_b != sol_b) { return false; }
                 if (gen_b) {
-                    const auto [gen_l, gen_r] = gen_sc.read_vals<ll, ll>();
-                    const auto [sol_l, sol_r] = sol_sc.may_read_vals<ll, ll>();
                     if (gen_l != sol_l or gen_r != sol_r) { return false; }
                 }
             }

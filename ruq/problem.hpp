@@ -23,13 +23,13 @@ struct ruq
         const auto vs = rng.gen_vec(n, v_min, v_max);
         pr.println(vs);
         for (usize i = 0; i < q; i++) {
-            const auto type = rng.gen(0UL, 3UL);
+            const auto type = rng.gen(0UL, 2UL);
             if (type == 0) {
                 pr.println(type, rng.gen(0UL, n - 1));
             } else if (type == 1) {
                 pr.println(type, rng.gen(0UL, n - 1), rng.gen(v_min, v_max));
             } else {
-                const auto p = rng.gen_pair(0Ul, n - 1);
+                const auto p = rng.gen_pair(0UL, n - 1);
                 pr.println(type, p.first, p.second + 1, rng.gen(v_min, v_max));
             }
         }
