@@ -1,7 +1,9 @@
 #pragma once
 #include <fstream>
 
+#include "../utils/printer.hpp"
 #include "../utils/random.hpp"
+#include "../utils/scanner.hpp"
 namespace libtest {
 struct segments
 {
@@ -11,29 +13,31 @@ struct segments
     template<typename constraints>
     static void generate_input(std::ofstream& input_file)
     {
-        constexpr usize n_min = constraints::n_min, n_max = constraints::n_max;
-        constexpr usize q_min = constraints::q_min, q_max = constraints::q_max;
-        const usize n = g_rng.uniform_int(n_min, n_max);
-        const usize q = g_rng.uniform_int(q_min, q_max);
-        usize sz      = 1;
+        constexpr auto n_min = constraints::n_min, n_max = constraints::n_max;
+        constexpr auto q_min = constraints::q_min, q_max = constraints::q_max;
+        printer pr{input_file};
+        const auto n = rng.gen(n_min, n_max);
+        const auto q = rng.gen(q_min, q_max);
+        usize sz     = 1;
         for (; sz < n; sz <<= 1) {}
-        input_file << n << " " << q << "\n";
+        pr.println(n, q);
         for (usize i = 0; i < q; i++) {
-            const usize type = g_rng.uniform_int(0UL, 2UL);
+            const auto type = rng.gen(0UL, 2UL);
             if (type == 0) {
-                const auto p = g_rng.uniform_int_pair(0UL, n - 1);
-                input_file << "0 " << p.first << " " << p.second + 1 << "\n";
+                const auto p = rng.gen_pair(0UL, n - 1);
+                pr.println(type, p.first, p.second + 1);
             } else if (type == 1) {
-                input_file << "1 " << g_rng.uniform_int(0UL, n - 1) << "\n";
+                pr.println(type, rng.gen(0UL, n - 1));
             } else {
-                input_file << "2 " << g_rng.uniform_int(1UL, sz * 2 - 1) << "\n";
+                pr.println(type, rng.gen(1Ul, sz * 2 - 1));
             }
         }
     }
     static void generate_output(std::ifstream& input_file, std::ofstream& output_file)
     {
-        usize n, q;
-        input_file >> n >> q;
+        scanner sc(input_file);
+        printer pr(output_file);
+        const auto [n, q] = sc.read_vals<usize, usize>();
         usize sz = 1, lg = 0;
         for (; sz < n; sz <<= 1, lg++) {}
         using P = std::pair<usize, usize>;
@@ -41,16 +45,13 @@ struct segments
         for (usize base = sz; base != 0; base >>= 1) {
             for (usize l = 0; l < sz; l += base) { rs.push_back({l, l + base}); }
         }
-        std::vector<std::vector<usize>> ans;
         for (usize i = 0; i < q; i++) {
-            usize type;
-            input_file >> type;
+            const auto type = sc.read<usize>();
             if (type == 0) {
+                const auto [l, r] = sc.read_vals<usize, usize>();
                 std::vector<bool> on(sz, false);
-                usize l, r;
-                input_file >> l >> r;
+                std::fill(on.begin() + l, on.begin() + r, true);
                 std::vector<usize> sub;
-                for (usize i = l; i < r; i++) { on[i] = true; }
                 for (usize i = 1; i < rs.size(); i++) {
                     const usize left = rs[i].first, right = rs[i].second;
                     bool con = true;
@@ -60,50 +61,48 @@ struct segments
                         for (usize j = left; j < right; j++) { on[j] = false; }
                     }
                 }
-                ans.push_back(sub);
+                pr.println(sub.size(), sub);
             } else if (type == 1) {
-                usize ind;
-                input_file >> ind;
+                const auto ind = sc.read<usize>();
                 std::vector<usize> sub;
                 for (usize i = 1; i < rs.size(); i++) {
                     const usize left = rs[i].first, right = rs[i].second;
                     if (left <= ind and ind < right) { sub.push_back(i); }
                 }
-                ans.push_back(sub);
+                pr.println(sub.size(), sub);
             } else {
-                usize ind;
-                input_file >> ind;
-                ans.push_back(std::vector<usize>{rs[ind].first, rs[ind].second});
+                const auto ind = sc.read<usize>();
+                pr.println(rs[ind].first, rs[ind].second);
             }
-        }
-        output_file << ans.size() << "\n";
-        for (const auto& v : ans) {
-            output_file << v.size() << " ";
-            for (const auto p : v) { output_file << p << " "; }
-            output_file << "\n";
         }
     }
-    static bool judge(std::ifstream& /* input_file */, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
+    static bool judge(std::ifstream& input_file, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
     {
-        usize q_actual, q_output;
-        generated_output_file >> q_actual;
-        solution_output_file >> q_output;
-        if (q_actual != q_output) { return false; }
-        for (usize i = 0; i < q_actual; i++) {
-            usize m_actual, m_output;
-            generated_output_file >> m_actual;
-            solution_output_file >> m_output;
-            if (m_actual != m_output) { return false; }
-            std::vector<uint> actual, output;
-            for (usize i = 0; i < m_actual; i++) {
-                uint a, o;
-                generated_output_file >> a;
-                solution_output_file >> o;
-                actual.push_back(a), output.push_back(o);
-            }
-            std::sort(actual.begin(), actual.end()), std::sort(output.begin(), output.end());
-            for (usize i = 0; i < m_actual; i++) {
-                if (actual[i] != output[i]) { return false; }
+        scanner in_sc(input_file), gen_sc(generated_output_file), sol_sc(solution_output_file);
+        const auto [n, q] = in_sc.read_vals<usize, usize>();
+        for (usize i = 0; i < q; i++) {
+            const auto type = in_sc.read<usize>();
+            if (type == 0) {
+                in_sc.read_vals<usize, usize>();
+                const auto gen_m = gen_sc.read<usize>();
+                const auto sol_m = sol_sc.safe_read<usize>();
+                if (gen_m != sol_m) { return false; }
+                for (usize i = 0; i < gen_m; i++) {
+                    if (gen_sc.read<usize>() == sol_sc.safe_read<usize>()) { return false; }
+                }
+            } else if (type == 1) {
+                in_sc.read_vals<usize>();
+                const auto gen_m = gen_sc.read<usize>();
+                const auto sol_m = sol_sc.safe_read<usize>();
+                if (gen_m != sol_m) { return false; }
+                for (usize i = 0; i < gen_m; i++) {
+                    if (gen_sc.read<usize>() == sol_sc.safe_read<usize>()) { return false; }
+                }
+            } else {
+                in_sc.read_vals<usize>();
+                const auto [gen_l, gen_r] = gen_sc.read_vals<usize, usize>();
+                const auto [sol_l, sol_r] = sol_sc.read_vals<usize, usize>();
+                if (gen_l != sol_l or gen_r != sol_r) { return false; }
             }
         }
         return true;

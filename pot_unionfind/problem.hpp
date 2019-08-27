@@ -1,7 +1,9 @@
 #pragma once
 #include <fstream>
 
+#include "../utils/printer.hpp"
 #include "../utils/random.hpp"
+#include "../utils/scanner.hpp"
 namespace libtest {
 struct pot_unionfind
 {
@@ -11,37 +13,35 @@ struct pot_unionfind
     template<typename constraints>
     static void generate_input(std::ofstream& input_file)
     {
-        constexpr usize n_min = constraints::n_min, n_max = constraints::n_max;
-        constexpr usize q_min = constraints::q_min, q_max = constraints::q_max;
-        constexpr ll v_min = constraints::v_min, v_max = constraints::v_max;
-        const usize n = g_rng.uniform_int(n_min, n_max), q = g_rng.uniform_int(q_min, q_max);
+        constexpr auto n_min = constraints::n_min, n_max = constraints::n_max;
+        constexpr auto q_min = constraints::q_min, q_max = constraints::q_max;
+        constexpr auto v_min = constraints::v_min, v_max = constraints::v_max;
+        printer pr{input_file};
+        const auto n = rng.gen(n_min, n_max), q = rng.gen(q_min, q_max);
         input_file << n << " " << q << "\n";
         for (usize i = 0; i < q; i++) {
-            const usize type = g_rng.uniform_int(0UL, 2UL);
+            const usize type = rng.gen(0UL, 2UL);
             if (type == 0) {
-                input_file << "0 " << g_rng.uniform_int(0UL, n - 1) << " " << g_rng.uniform_int(0UL, n - 1) << " " << g_rng.uniform_int(v_min, v_max) << "\n";
+                pr.println(type, rng.gen(0UL, n - 1), rng.gen(0UL, n - 1), rng.gen(v_min, v_max));
             } else if (type == 1) {
-                input_file << "1 " << g_rng.uniform_int(0UL, n - 1) << " " << g_rng.uniform_int(0UL, n - 1) << "\n";
+                pr.println(type, rng.gen(0UL, n - 1), rng.gen(0UL, n - 1));
             } else {
-                input_file << "2 " << g_rng.uniform_int(0UL, n - 1) << "\n";
+                pr.println(type, rng.gen(0UL, n - 1));
             }
         }
     }
     static void generate_output(std::ifstream& input_file, std::ofstream& output_file)
     {
-        usize n, q;
-        input_file >> n >> q;
-        std::vector<ll> ans;
+        scanner sc(input_file);
+        printer pr(output_file);
+        const auto [n, q] = sc.read_vals<usize, usize>();
         std::vector<usize> id(n);
         std::vector<ll> pot(n, 0);
         std::iota(id.begin(), id.end(), 0);
         for (usize i = 0; i < q; i++) {
-            usize type;
-            input_file >> type;
+            const usize type = sc.read<usize>();
             if (type == 0) {
-                usize a, b;
-                ll v;
-                input_file >> a >> b >> v;
+                const auto [a, b, v] = sc.read_vals<usize, usize, ll>();
                 if (id[a] != id[b]) {
                     const usize aid = id[a], bid = id[b];
                     const ll pl = pot[a] - pot[b] + v;
@@ -50,37 +50,48 @@ struct pot_unionfind
                     }
                 }
             } else if (type == 1) {
-                usize a, b;
-                input_file >> a >> b;
+                const auto [a, b] = sc.read_vals<usize, usize>();
                 if (id[a] == id[b]) {
-                    ans.push_back(pot[b] - pot[a]);
+                    pr.println(id[a] == id[b], pot[b] - pot[a]);
                 } else {
-                    ans.push_back(0);
+                    pr.println(id[a] == id[b]);
                 }
             } else {
-                usize ind;
-                input_file >> ind;
-                usize sum = 0;
+                const auto ind = sc.read<usize>();
+                usize sum      = 0;
                 for (usize i = 0; i < n; i++) {
                     if (id[i] == id[ind]) { sum++; }
                 }
-                ans.push_back(static_cast<ll>(sum));
+                pr.println(sum);
             }
         }
-        output_file << ans.size() << "\n";
-        for (const auto e : ans) { output_file << e << "\n"; }
     }
-    static bool judge(std::ifstream& /* input_file */, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
+    static bool judge(std::ifstream& input_file, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
     {
-        usize q_actual, q_output;
-        generated_output_file >> q_actual;
-        solution_output_file >> q_output;
-        if (q_actual != q_output) { return false; }
-        for (usize i = 0; i < q_actual; i++) {
-            ll actual, output;
-            generated_output_file >> actual;
-            solution_output_file >> output;
-            if (actual != output) { return false; }
+        scanner in_sc(input_file);
+        scanner gen_sc(generated_output_file);
+        scanner sol_sc(solution_output_file);
+        const auto [n, q] = in_sc.read_vals<usize, usize>();
+        for (usize i = 0; i < q; i++) {
+            const usize type = in_sc.read<usize>();
+            if (type == 0) {
+                in_sc.read_vals<usize, usize, ll>();
+            } else if (type == 1) {
+                in_sc.read_vals<usize, usize>();
+                const auto gen_b = gen_sc.read<usize>();
+                const auto sol_b = sol_sc.safe_read<usize>();
+                if (gen_b != sol_b) { return false; }
+                if (gen_b) {
+                    const auto gen_p = gen_sc.read<ll>();
+                    const auto sol_p = sol_sc.safe_read<ll>();
+                    if (gen_p != sol_p) { return false; }
+                }
+            } else {
+                in_sc.read<usize>();
+                const auto gen_s = gen_sc.read<usize>();
+                const auto sol_s = sol_sc.safe_read<usize>();
+                if (gen_s != sol_s) { return false; }
+            }
         }
         return true;
     }

@@ -1,7 +1,9 @@
 #pragma once
 #include <fstream>
 
+#include "../utils/printer.hpp"
 #include "../utils/random.hpp"
+#include "../utils/scanner.hpp"
 namespace libtest {
 struct ranges
 {
@@ -11,70 +13,74 @@ struct ranges
     template<typename constraints>
     static void generate_input(std::ofstream& input_file)
     {
-        constexpr ll n_min = constraints::n_min, n_max = constraints::n_max;
-        constexpr usize q_min = constraints::q_min, q_max = constraints::q_max;
-        const ll n    = g_rng.uniform_int(n_min, n_max) + 1;
-        const usize q = g_rng.uniform_int(q_min, q_max);
-        input_file << n << " " << q << "\n";
+        constexpr auto n_min = constraints::n_min, n_max = constraints::n_max;
+        constexpr auto q_min = constraints::q_min, q_max = constraints::q_max;
+        printer pr{input_file};
+        const auto q = rng.gen(q_min, q_max);
+        pr.println(q);
         for (usize i = 0; i < q; i++) {
-            const usize type = g_rng.uniform_int(0UL, 2UL);
+            const auto type = rng.gen(0UL, 2UL);
             if (type == 0) {
-                const auto p = g_rng.uniform_int_pair(n_min, n_max);
-                input_file << "0 " << p.first << " " << p.second + 1 << "\n";
+                const auto p = rng.gen_pair(n_min, n_max);
+                pr.println(type, p.first, p.second + 1);
             } else if (type == 1) {
-                const auto p = g_rng.uniform_int_pair(n_min, n_max);
-                input_file << "1 " << p.first << " " << p.second + 1 << "\n";
+                const auto p = rng.gen_pair(n_min, n_max);
+                pr.println(type, p.first, p.second + 1);
             } else {
-                input_file << "2 " << g_rng.uniform_int(n_min, n_max) << "\n";
+                pr.println(type, rng.gen(n_min, n_max));
             }
         }
     }
     static void generate_output(std::ifstream& input_file, std::ofstream& output_file)
     {
         constexpr ll n_min = large_constraints::n_min, n_max = large_constraints::n_max;
-        ll n;
-        usize q;
-        input_file >> n >> q;
+        scanner sc(input_file);
+        printer pr(output_file);
+        const auto q = sc.read<usize>();
+        pr.println(q);
         std::vector<bool> on(n_max - n_min + 2, false);
-        using P  = std::pair<ll, ll>;
-        using PP = std::pair<bool, P>;
-        std::vector<PP> ans;
         for (usize i = 0; i < q; i++) {
-            usize type;
-            input_file >> type;
+            const auto type = sc.read<usize>();
             if (type == 0) {
-                ll a, b;
-                input_file >> a >> b, a -= (n_min - 1), b -= (n_min - 1);
-                for (ll i = a; i < b; i++) { on[i] = true; }
+                const auto [a, b] = sc.read_vals<ll, ll>();
+                for (ll i = a; i < b; i++) { on[i - (n_min - 1)] = true; }
             } else if (type == 1) {
-                ll a, b;
-                input_file >> a >> b, a -= (n_min - 1), b -= (n_min - 1);
-                for (ll i = a; i < b; i++) { on[i] = false; }
+                const auto [a, b] = sc.read_vals<ll, ll>();
+                for (ll i = a; i < b; i++) { on[i - (n_min - 1)] = false; }
             } else {
-                ll ind;
-                input_file >> ind, ind -= (n_min - 1);
-                ll l = ind, r = ind;
-                for (; on[l]; l--) {}
-                for (; on[r]; r++) {}
-                ans.push_back({on[ind], {l + n_min, r + n_min - 1}});
+                const auto ind = sc.read<ll>();
+                if (on[ind]) {
+                    ll l = ind, r = ind;
+                    for (; on[l - (n_min - 1)]; l--) {}
+                    for (; on[r - (n_min - 1)]; r++) {}
+                    pr.println(on[ind], l + 1, r);
+                } else {
+                    pr.println(on[ind]);
+                }
             }
         }
-        output_file << ans.size() << "\n";
-        for (const auto& e : ans) { output_file << e.first << " " << e.second.first << " " << e.second.second << "\n"; }
     }
-    static bool judge(std::ifstream& /* input_file */, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
+    static bool judge(std::ifstream& input_file, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
     {
-        usize q_actual, q_output;
-        generated_output_file >> q_actual;
-        solution_output_file >> q_output;
-        if (q_actual != q_output) { return false; }
-        for (usize i = 0; i < q_actual; i++) {
-            bool actual_on, output_on;
-            ll actual_left, actual_right, output_left, output_right;
-            generated_output_file >> actual_on >> actual_left >> actual_right;
-            solution_output_file >> output_on >> output_left >> output_right;
-            if (actual_on != output_on) { return false; }
-            if (actual_on and (actual_left != output_left or actual_right != output_right)) { return false; }
+        scanner in_sc(input_file), gen_sc(generated_output_file), sol_sc(solution_output_file);
+        const auto q = in_sc.read<usize>();
+        for (usize i = 0; i < q; i++) {
+            const auto type = in_sc.read<usize>();
+            if (type == 0) {
+                in_sc.read_vals<ll, ll>();
+            } else if (type == 1) {
+                in_sc.read_vals<ll, ll>();
+            } else {
+                in_sc.read<ll>();
+                const auto gen_b = gen_sc.read<bool>();
+                const auto sol_b = sol_sc.safe_read<bool>();
+                if (gen_b != sol_b) { return false; }
+                if (gen_b) {
+                    const auto [gen_l, gen_r] = gen_sc.read_vals<ll, ll>();
+                    const auto [sol_l, sol_r] = sol_sc.safe_read_vals<ll, ll>();
+                    if (gen_l != sol_l or gen_r != sol_r) { return false; }
+                }
+            }
         }
         return true;
     }

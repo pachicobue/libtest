@@ -1,7 +1,9 @@
 #pragma once
 #include <fstream>
 
+#include "../utils/printer.hpp"
 #include "../utils/random.hpp"
+#include "../utils/scanner.hpp"
 namespace libtest {
 struct range_freq
 {
@@ -11,53 +13,43 @@ struct range_freq
     template<typename constraints>
     static void generate_input(std::ofstream& input_file)
     {
-        constexpr usize n_min = constraints::n_min, n_max = constraints::n_max;
-        constexpr usize q_min = constraints::q_min, q_max = constraints::q_max;
-        constexpr ull v_min = constraints::v_min, v_max = constraints::v_max;
-        const usize n = g_rng.uniform_int(n_min, n_max), q = g_rng.uniform_int(q_min, q_max);
-        input_file << n << "\n";
-        const auto v = g_rng.uniform_int_vec(n, v_min, v_max);
-        for (const auto& e : v) { input_file << e << " "; }
-        input_file << "\n"
-                   << q << "\n";
+        constexpr auto n_min = constraints::n_min, n_max = constraints::n_max;
+        constexpr auto q_min = constraints::q_min, q_max = constraints::q_max;
+        constexpr auto v_min = constraints::v_min, v_max = constraints::v_max;
+        printer pr{input_file};
+        const auto n = rng.gen(n_min, n_max), q = rng.gen(q_min, q_max);
+        pr.println(n, q);
+        const auto v = rng.gen_vec(n, v_min, v_max);
+        pr.println(v);
         for (usize i = 0; i < q; i++) {
-            const auto p = g_rng.uniform_int_pair(0UL, n - 1);
-            const auto v = g_rng.uniform_int_pair(v_min, v_max);
-            input_file << p.first << " " << p.second + 1 << " " << v.first << " " << v.second + 1 << "\n";
+            const auto p = rng.gen_pair(0UL, n - 1);
+            const auto v = rng.gen_pair(v_min, v_max);
+            pr.println(p.first, p.second + 1, v.first, v.second + 1);
         }
     }
     static void generate_output(std::ifstream& input_file, std::ofstream& output_file)
     {
-        usize n, q;
-        input_file >> n;
-        std::vector<ull> v(n);
-        for (auto& e : v) { input_file >> e; }
-        input_file >> q;
-        std::vector<usize> ans;
+        scanner sc(input_file);
+        printer pr(output_file);
+        const auto [n, q] = sc.read_vals<usize, usize>();
+        const auto v      = sc.read_vec<ull>(n);
         for (usize i = 0; i < q; i++) {
-            usize l, r;
-            ull vmin, vsup;
-            input_file >> l >> r >> vmin >> vsup;
-            usize cnt = 0;
+            const auto [l, r, vmin, vsup] = sc.read_vals<usize, usize, ull, ull>();
+            usize cnt                     = 0;
             for (usize i = l; i < r; i++) {
                 if (vmin <= v[i] and v[i] < vsup) { cnt++; }
             }
-            ans.push_back(cnt);
+            pr.println(cnt);
         }
-        output_file << ans.size() << "\n";
-        for (const auto e : ans) { output_file << e << "\n"; }
     }
-    static bool judge(std::ifstream& /* input_file */, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
+    static bool judge(std::ifstream& input_file, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
     {
-        usize q_actual, q_output;
-        generated_output_file >> q_actual;
-        solution_output_file >> q_output;
-        if (q_actual != q_output) { return false; }
-        for (usize i = 0; i < q_actual; i++) {
-            ull actual, output;
-            generated_output_file >> actual;
-            solution_output_file >> output;
-            if (actual != output) { return false; }
+        scanner in_sc(input_file), gen_sc(generated_output_file), sol_sc(solution_output_file);
+        const auto q = in_sc.read<usize>();
+        for (usize i = 0; i < q; i++) {
+            const auto gen_c = gen_sc.read<usize>();
+            const auto sol_c = gen_sc.safe_read<usize>();
+            if (gen_c != sol_c) { return false; }
         }
         return true;
     }

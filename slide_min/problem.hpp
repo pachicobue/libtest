@@ -2,7 +2,9 @@
 #include <fstream>
 #include <set>
 
+#include "../utils/printer.hpp"
 #include "../utils/random.hpp"
+#include "../utils/scanner.hpp"
 namespace libtest {
 struct slide_min
 {
@@ -12,42 +14,37 @@ struct slide_min
     template<typename constraints>
     static void generate_input(std::ofstream& input_file)
     {
-        constexpr usize n_min = constraints::n_min, n_max = constraints::n_max;
-        constexpr ll v_min = constraints::v_min, v_max = constraints::v_max;
-        const usize n = g_rng.uniform_int(n_min, n_max);
-        const usize k = g_rng.uniform_int(1UL, n);
-        input_file << n << " " << k << "\n";
-        const auto a = g_rng.uniform_int_vec(n, v_min, v_max);
-        for (const auto& e : a) { input_file << e << " "; }
+        constexpr auto n_min = constraints::n_min, n_max = constraints::n_max;
+        constexpr auto v_min = constraints::v_min, v_max = constraints::v_max;
+        printer pr{input_file};
+        const auto n = rng.gen(n_min, n_max);
+        const auto k = rng.gen(1UL, n);
+        pr.println(n, k);
+        pr.println(rng.gen_vec(n, v_min, v_max));
     }
     static void generate_output(std::ifstream& input_file, std::ofstream& output_file)
     {
-        usize n, k;
-        input_file >> n >> k;
-        std::vector<ll> a(n);
-        for (auto& e : a) { input_file >> e; }
-        output_file << n << "\n";
-        for (usize r = 1; r < k; r++) {
-            ll min = std::numeric_limits<ll>::max();
-            for (usize i = 0; i < r; i++) { min = std::min(min, a[i]); }
-            output_file << min << " ";
+        scanner sc(input_file);
+        printer pr(output_file);
+        const auto [n, k] = sc.read_vals<usize, usize>();
+        const auto a      = sc.read_vec<ll>(n);
+        std::vector<ll> min(n);
+        for (usize r = 0; r < k - 1; r++) {
+            min[r] = std::accumulate(a.begin(), a.begin() + r + 1, std::numeric_limits<ll>::max(), [](const ll a, const ll b) { return std::min(a, b); });
         }
         for (usize l = 0; l <= n - k; l++) {
-            ll min = std::numeric_limits<ll>::max();
-            for (usize i = l; i < l + k; i++) { min = std::min(min, a[i]); }
-            output_file << min << " ";
+            min[l + k - 1] = std::accumulate(a.begin() + l, a.begin() + l + k, std::numeric_limits<ll>::max(), [](const ll a, const ll b) { return std::min(a, b); });
         }
-        output_file << "\n";
+        pr.println(min);
     }
-    static bool judge(std::ifstream& /*input_file*/, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
+    static bool judge(std::ifstream& input_file, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
     {
-        usize actual, output;
-        generated_output_file >> actual, solution_output_file >> output;
-        if (actual != output) { return false; }
-        for (usize i = 0; i < actual; i++) {
-            usize actual, output;
-            generated_output_file >> actual, solution_output_file >> output;
-            if (actual != output) { return false; }
+        scanner in_sc(input_file), gen_sc(generated_output_file), sol_sc(solution_output_file);
+        const auto n   = in_sc.read<usize>();
+        const auto gen = gen_sc.read_vec<ll>(n);
+        const auto sol = gen_sc.safe_read_vec<ll>(n);
+        for (usize i = 0; i < n; i++) {
+            if (gen[i] != sol[i]) { return false; }
         }
         return true;
     }

@@ -1,7 +1,9 @@
 #pragma once
 #include <fstream>
 
+#include "../utils/printer.hpp"
 #include "../utils/random.hpp"
+#include "../utils/scanner.hpp"
 namespace libtest {
 struct convex_hull
 {
@@ -11,56 +13,59 @@ struct convex_hull
     template<typename constraints>
     static void generate_input(std::ofstream& input_file)
     {
-        constexpr usize q_min = constraints::q_min, q_max = constraints::q_max;
-        constexpr ll v_min = constraints::v_min, v_max = constraints::v_max;
-        const usize q = g_rng.uniform_int(q_min, q_max);
-        input_file << q << "\n";
-        auto as = g_rng.uniform_int_vec(q, v_min, v_max), xs = g_rng.uniform_int_vec(q, v_min, v_max);
+        constexpr auto q_min = constraints::q_min, q_max = constraints::q_max;
+        constexpr auto v_min = constraints::v_min, v_max = constraints::v_max;
+        printer pr{input_file};
+        const usize q = rng.gen(q_min, q_max);
+        pr.println(q);
+        auto as = rng.gen_vec(q, v_min, v_max), xs = rng.gen_vec(q, v_min, v_max);
         std::sort(as.begin(), as.end(), std::greater<ll>{}), std::sort(xs.begin(), xs.end());
         usize an = 0, xn = 0;
         for (usize i = 0; i < q; i++) {
-            const usize type = g_rng.uniform_int(0, 1);
+            const usize type = rng.gen(0, 1);
             if (type == 0) {
-                input_file << "0 " << as[an++] << " " << g_rng.uniform_int(v_min, v_max) << "\n";
+                pr.println(0, as[an++], rng.gen(v_min, v_max));
             } else {
-                input_file << "1 " << xs[xn++] << "\n";
+                pr.println(1, xs[xn++]);
             }
         }
     }
     static void generate_output(std::ifstream& input_file, std::ofstream& output_file)
     {
-        usize q;
-        input_file >> q;
-        using P = std::pair<ll, ll>;
-        std::vector<P> ans;
+        scanner sc(input_file);
+        printer pr(output_file);
+        const auto q = sc.read<usize>();
         std::vector<ll> as, bs;
         for (usize i = 0; i < q; i++) {
-            usize type;
-            input_file >> type;
+            const auto type = sc.read<usize>();
             if (type == 0) {
-                ll a, b;
-                input_file >> a >> b;
+                const auto [a, b] = sc.read_vals<usize, usize>();
                 as.push_back(a), bs.push_back(b);
             } else {
-                ll x;
-                input_file >> x;
-                ll min = std::numeric_limits<ll>::max();
+                const auto x = sc.read<ll>();
+                ll min       = std::numeric_limits<ll>::max();
                 for (usize i = 0; i < as.size(); i++) { min = std::min(min, as[i] * x + bs[i]); }
-                ans.push_back({not as.empty(), min});
+                pr.println(not as.empty(), min);
             }
         }
-        output_file << ans.size() << "\n";
-        for (const auto& e : ans) { output_file << e.first << " " << e.second << "\n"; }
     }
-    static bool judge(std::ifstream& /*input_file*/, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
+    static bool judge(std::ifstream& input_file, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
     {
-        usize actual, output;
-        generated_output_file >> actual, solution_output_file >> output;
-        if (actual != output) { return false; }
-        for (usize i = 0; i < actual; i++) {
-            usize actual, output;
-            generated_output_file >> actual, solution_output_file >> output;
-            if (actual != output) { return false; }
+        scanner in_sc(input_file), gen_sc(generated_output_file), sol_sc(solution_output_file);
+        const auto q = in_sc.read<usize>();
+        for (usize i = 0; i < q; i++) {
+            const auto type = in_sc.read<usize>();
+            if (type == 0) {
+                in_sc.read_vals<usize, usize>();
+            } else {
+                in_sc.read<ll>();
+                const auto [gen_b, gen_y] = gen_sc.read_vals<bool, ll>();
+                const auto [sol_b, sol_y] = sol_sc.safe_read_vals<bool, ll>();
+                if (gen_b != sol_b) { return false; }
+                if (gen_b) {
+                    if (gen_y != sol_y) { return false; }
+                }
+            }
         }
         return true;
     }

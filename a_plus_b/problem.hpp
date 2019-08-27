@@ -1,7 +1,9 @@
 #pragma once
 #include <fstream>
 
+#include "../utils/printer.hpp"
 #include "../utils/random.hpp"
+#include "../utils/scanner.hpp"
 namespace libtest {
 struct a_plus_b  // なんでも良い
 {
@@ -21,19 +23,24 @@ struct a_plus_b  // なんでも良い
      *   解法から生成された出力ファイルsolution_output_file からAC判定をする関数
      */
     template<typename constraints>
-    static void generate_input(std::ofstream& input_file) { input_file << g_rng.uniform_int(constraints::a_min, constraints::a_max) << " " << g_rng.uniform_int(constraints::b_min, constraints::b_max) << "\n"; }
+    static void generate_input(std::ofstream& input_file)
+    {
+        constexpr auto a_min = constraints::a_min, a_max = constraints::a_max;
+        constexpr auto b_min = constraints::b_min, b_max = constraints::b_max;
+        printer pr{input_file};
+        pr.println(rng.gen(a_min, a_max), rng.gen(b_min, b_max));
+    }
     static void generate_output(std::ifstream& input_file, std::ofstream& output_file)
     {
-        int a, b;
-        input_file >> a >> b;
-        output_file << a + b << std::endl;
+        scanner sc(input_file);
+        printer pr(output_file);
+        const auto [a, b] = sc.read_vals<int, int>();
+        pr.println(a + b);
     }
     static bool judge(std::ifstream& /* input_file */, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
     {
-        int actual, output;
-        generated_output_file >> actual;
-        solution_output_file >> output;
-        return actual == output;
+        scanner gen_sc(generated_output_file), sol_sc(solution_output_file);
+        return gen_sc.read<int>() == sol_sc.safe_read<int>();
     }
     /**
      * 制約を表す構造体
