@@ -8,7 +8,7 @@ template<typename T>
 std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
 {
     for (usize i = 0; i < v.size(); i++) { os << (i == 0 ? "" : " ") << v[i]; }
-    return os << "\n";
+    return os;
 }
 template<typename T1, typename T2>
 std::ostream& operator<<(std::ostream& os, const std::pair<T1, T2>& p) { return os << p.first << " " << p.second; }

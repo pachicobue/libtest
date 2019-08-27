@@ -20,7 +20,7 @@ public:
         return ans;
     }
     template<typename T>
-    auto gen_pair(const T min, const T max) { return std::minmax(gen(min, max), gen(min, max)); }
+    std::pair<T, T> gen_pair(const T min, const T max) { return std::minmax(gen(min, max), gen(min, max)); }
 
 private:
     std::mt19937_64 mt;
