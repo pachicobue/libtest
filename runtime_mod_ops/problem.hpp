@@ -13,7 +13,7 @@ struct runtime_mod_ops
     template<typename constraints>
     static void generate_input(std::ofstream& input_file)
     {
-        constexpr auto mod_min = 2, mod_max = 1000000000;
+        constexpr auto mod_min = constraints::mod_min, mod_max = constraints::mod_max;
         constexpr auto q_min = constraints::q_min, q_max = constraints::q_max;
         constexpr auto v_min = constraints::v_min, v_max = constraints::v_max;
         constexpr auto i_min = constraints::i_min, i_max = constraints::i_max;
