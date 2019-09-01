@@ -5,7 +5,7 @@
 #include "../utils/random.hpp"
 #include "../utils/scanner.hpp"
 namespace libtest {
-struct a_minus_b_large
+struct convolution
 {
     static constexpr const char* path       = "convolution";
     static constexpr const char* name       = "Convolution";
@@ -18,8 +18,8 @@ struct a_minus_b_large
         const auto n = rng.gen(n_min, n_max);
         const auto m = rng.gen(n_min, n_max);
         pr.println(n, m);
-        const auto a = rng.gen_vec(n, 0, mod - 1);
-        const auto b = rng.gen_vec(m, 0, mod - 1);
+        const auto a = rng.gen_vec(n, 0U, mod - 1);
+        const auto b = rng.gen_vec(m, 0U, mod - 1);
         pr.println(a);
         pr.println(b);
     }
@@ -31,7 +31,7 @@ struct a_minus_b_large
         const auto a = sc.read_vec<ll>(n), b = sc.read_vec<ll>(m);
         std::vector<uint> ans(n + m - 1, 0);
         for (usize i = 0; i < n; i++) {
-            for (usize j = 0; j < m; j++) { (ans[i + j] += a[i] * b[j]) %= mod; }
+            for (usize j = 0; j < m; j++) { (ans[i + j] += static_cast<uint>(a[i] * b[j] % mod)) %= mod; }
         }
         pr.println(ans);
     }
@@ -44,7 +44,8 @@ struct a_minus_b_large
         }
         return true;
     }
-    static constexpr uint mod = 924844033;
+    static constexpr uint mod  = 924844033;
+    static constexpr uint root = 5;
     struct small_constraints
     {
         static constexpr usize n_min = 1, n_max = 100;
