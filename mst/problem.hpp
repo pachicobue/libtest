@@ -15,7 +15,7 @@ struct mst
     static void generate_input(std::ofstream& input_file)
     {
         constexpr auto v_min = constraints::v_min, v_max = constraints::v_max;
-        constexpr auto e_min = constraints::e_min, e_max = constraints::e_max;
+        constexpr auto e_max = constraints::e_max;
         constexpr auto c_min = constraints::c_min, c_max = constraints::c_max;
         printer pr{input_file};
         const auto v = rng.gen(v_min, v_max);
@@ -58,14 +58,14 @@ struct mst
     }
     struct small_constraints
     {
-        static constexpr usize v_min = 2, v_max = 10;
-        static constexpr usize e_min = 1, e_max = 20;
+        static constexpr usize v_min = 2, v_max = 100;
+        static constexpr usize e_max = 1000;
         static constexpr ll c_min = -100, c_max = 100;
     };
     struct large_constraints
     {
         static constexpr usize v_min = 2, v_max = 10000;
-        static constexpr usize e_min = 1, e_max = 100000;
+        static constexpr usize e_max = 100000;
         static constexpr ll c_min = -10000, c_max = 10000;
     };
 };
