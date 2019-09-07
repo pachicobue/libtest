@@ -41,16 +41,17 @@ graph random_graph(const usize v, const usize e, const bool bi = false)
     graph g{v};
     unionfind uf{v};
     for (usize i = 0; i < v - 1;) {
-        const auto p = rng.gen_pair(0UL, v - 1);
+        auto p = rng.gen_pair(0UL, v - 1);
+        if (rng.gen(0, 1)) { std::swap(p.first, p.second); }
         if (uf.same(p.first, p.second)) { continue; }
         uf.unite(p.first, p.second), g.add_edge(p.first, p.second, bi), i++;
     }
     for (usize i = v - 1; i < e;) {
-        const auto p = rng.gen_pair(0UL, v - 1);
+        auto p = rng.gen_pair(0UL, v - 1);
+        if (rng.gen(0, 1)) { std::swap(p.first, p.second); }
         if (p.first == p.second) { continue; }
         g.add_edge(p.first, p.second, bi), i++;
     }
-    assert(g.e == (bi ? 2 : 1) * e);
     return g;
 }
 template<typename T>
@@ -59,16 +60,34 @@ cost_graph<T> random_cost_graph(const usize v, const usize e, const T c_min, con
     cost_graph<T> g{v};
     unionfind uf{v};
     for (usize i = 0; i < v - 1;) {
-        const auto p = rng.gen_pair(0UL, v - 1);
+        auto p = rng.gen_pair(0UL, v - 1);
+        if (rng.gen(0, 1)) { std::swap(p.first, p.second); }
         const auto c = rng.gen(c_min, c_max);
         if (uf.same(p.first, p.second)) { continue; }
         uf.unite(p.first, p.second), g.add_edge(p.first, p.second, c, bi), i++;
     }
     for (usize i = v - 1; i < e;) {
-        const auto p = rng.gen_pair(0UL, v - 1);
+        auto p = rng.gen_pair(0UL, v - 1);
+        if (rng.gen(0, 1)) { std::swap(p.first, p.second); }
         const auto c = rng.gen(c_min, c_max);
         if (p.first == p.second) { continue; }
         g.add_edge(p.first, p.second, c, bi), i++;
+    }
+    return g;
+}
+graph random_dag(const usize v, const usize e)
+{
+    graph g{v};
+    unionfind uf{v};
+    for (usize i = 0; i < v - 1;) {
+        const auto p = rng.gen_pair(0UL, v - 1);
+        if (uf.same(p.first, p.second)) { continue; }
+        uf.unite(p.first, p.second), g.add_edge(p.first, p.second), i++;
+    }
+    for (usize i = v - 1; i < e;) {
+        const auto p = rng.gen_pair(0UL, v - 1);
+        if (p.first == p.second) { continue; }
+        g.add_edge(p.first, p.second), i++;
     }
     return g;
 }
