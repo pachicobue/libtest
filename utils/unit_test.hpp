@@ -122,6 +122,14 @@ private:
                 const bool ok = problem_type::judge(input_file, generated_output_file, solution_output_file_in);
                 if (not ok) {
                     *g_logger_ptr << wa_color << "[       WA ] " << reset << message_color << input_file_path.filename() << " (" << time_ms << " ms)" << reset << std::endl;
+                    std::ifstream in_file{input_file_path}, gen_file{generated_out_path}, sol_file{solution_out_path};
+                    std::string line;
+                    *g_logger_ptr << message_color << "(Input)" << reset << std::endl;
+                    while (std::getline(in_file, line)) { *g_logger_ptr << message_color << line << reset << std::endl; }
+                    *g_logger_ptr << message_color << "(Expected)" << reset << std::endl;
+                    while (std::getline(gen_file, line)) { *g_logger_ptr << message_color << line << reset << std::endl; }
+                    *g_logger_ptr << message_color << "(Output)" << reset << std::endl;
+                    while (std::getline(sol_file, line)) { *g_logger_ptr << message_color << line << reset << std::endl; }
                 } else {
                     *g_logger_ptr << ac_color << "[       AC ] " << reset << message_color << input_file_path.filename() << " (" << time_ms << " ms)" << reset << std::endl;
                     passed = true;
