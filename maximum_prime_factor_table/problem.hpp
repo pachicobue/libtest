@@ -5,10 +5,10 @@
 #include "../utils/random.hpp"
 #include "../utils/scanner.hpp"
 namespace libtest {
-struct moebius_table
+struct maximum_prime_factor_table
 {
-    static constexpr const char* path       = "moebius_table";
-    static constexpr const char* name       = "Moebius Function Table";
+    static constexpr const char* path       = "maximum_prime_factor_table";
+    static constexpr const char* name       = "Maximum Prime Factor Table";
     static constexpr std::size_t time_limit = 2000;
     template<typename constraints>
     static void generate_input(std::ofstream& input_file)
@@ -23,35 +23,31 @@ struct moebius_table
         scanner sc(input_file);
         printer pr(output_file);
         const auto n = sc.read<usize>();
-        std::vector<int> vs(n + 1, -2);
-        for (usize i = 1; i <= n; i++) {
-            auto num = i;
-            usize pn = 0;
-            for (usize p = 2, e = 0; p <= i; p++, e = 0) {
-                while (num % p == 0) { num /= p, e++; }
-                if (e >= 2) { vs[i] = 0; }
-                if (e >= 1) { pn++; }
+        std::vector<bool> isp(n + 1, true);
+        isp[0] = isp[1] = false;
+        for (usize i = 2; i <= n; i++) {
+            for (usize j = 2; j * j <= i; j++) {
+                if (i % j == 0) { isp[i] = false; }
             }
-            vs[i] = (vs[i] == -2 ? pn % 2 == 0 ? 1 : -1 : 0);
         }
-        pr.println(std::vector<int>(vs.begin() + 1, vs.end()));
+        pr.println(std::vector<bool>(isp.begin() + 1, isp.end()));
     }
     static bool judge(std::ifstream& input_file, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
     {
-        scanner in_sc{input_file}, gen_sc(generated_output_file), sol_sc(solution_output_file);
-        const usize n = in_sc.read<usize>();
-        for (usize i = 0; i < n; i++) {
-            if (gen_sc.read<int>() != sol_sc.may_read<int>()) { return false; }
+        scanner in_sc(input_file), gen_sc(generated_output_file), sol_sc(solution_output_file);
+        const auto [n, q] = in_sc.read_vals<usize, usize>();
+        for (usize i = 1; i <= n; i++) {
+            if (gen_sc.read<bool>() != sol_sc.may_read<bool>()) { return false; }
         }
         return true;
     }
     struct small_constraints
     {
-        static constexpr usize n_min = 1, n_max = 100;
+        static constexpr usize n_min = 1, n_max = 1000;
     };
     struct large_constraints
     {
-        static constexpr usize n_min = 1, n_max = 100000;
+        static constexpr usize n_min = 1, n_max = 1000000;
     };
 };
 }  // namespace libtest

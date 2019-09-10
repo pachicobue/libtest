@@ -8,7 +8,7 @@ namespace libtest {
 struct rmq_raq
 {
     static constexpr const char* path       = "rmq_raq";
-    static constexpr const char* name       = "Range Min Add Query";
+    static constexpr const char* name       = "Range Min Query & Range Add Query";
     static constexpr std::size_t time_limit = 2000;
     template<typename constraints>
     static void generate_input(std::ofstream& input_file)

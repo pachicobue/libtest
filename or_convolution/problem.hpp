@@ -8,7 +8,7 @@ namespace libtest {
 struct or_convolution
 {
     static constexpr const char* path       = "or_convolution";
-    static constexpr const char* name       = "Or-Convolution";
+    static constexpr const char* name       = "Or Convolution";
     static constexpr std::size_t time_limit = 2000;
     template<typename constraints>
     static void generate_input(std::ofstream& input_file)

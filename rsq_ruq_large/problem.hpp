@@ -8,7 +8,7 @@ namespace libtest {
 struct rsq_ruq_large
 {
     static constexpr const char* path       = "rsq_ruq_large";
-    static constexpr const char* name       = "Range Sum Update Query (Large)";
+    static constexpr const char* name       = "Range Sum Query & Range Update Query (Large)";
     static constexpr std::size_t time_limit = 3000;
     template<typename constraints>
     static void generate_input(std::ofstream& input_file)

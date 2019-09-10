@@ -8,7 +8,7 @@ namespace libtest {
 struct convex_hull
 {
     static constexpr const char* path       = "convex_hull";
-    static constexpr const char* name       = "Convex Hull";
+    static constexpr const char* name       = "Convex Hull (Lowest Envelope)";
     static constexpr std::size_t time_limit = 2000;
     template<typename constraints>
     static void generate_input(std::ofstream& input_file)

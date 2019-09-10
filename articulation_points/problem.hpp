@@ -1,0 +1,72 @@
+#pragma once
+#include <fstream>
+
+#include "../utils/graph.hpp"
+#include "../utils/printer.hpp"
+#include "../utils/random.hpp"
+#include "../utils/scanner.hpp"
+namespace libtest {
+struct articulation_points
+{
+    static constexpr const char* path       = "articulation_points";
+    static constexpr const char* name       = "Articulation Points";
+    static constexpr std::size_t time_limit = 2000;
+    template<typename constraints>
+    static void generate_input(std::ofstream& input_file)
+    {
+        constexpr auto v_min = constraints::v_min, v_max = constraints::v_max;
+        constexpr auto e_max = constraints::e_max;
+        printer pr{input_file};
+        const auto v = rng.gen(v_min, v_max);
+        const auto e = rng.gen(v - 1, e_max);
+        pr.println(v, e);
+        const auto g = random_graph(v, e, true);
+        for (usize i = 0; i < v; i++) {
+            for (const usize to : g.edge[i]) {
+                if (i < to) { pr.println(i, to); }
+            }
+        }
+    }
+    static void generate_output(std::ifstream& input_file, std::ofstream& output_file)
+    {
+        scanner sc{input_file};
+        printer pr{output_file};
+        const auto [v, e] = sc.read_vals<usize, usize>();
+        std::vector<usize> a(e), b(e);
+        for (usize i = 0; i < e; i++) { std::tie(a[i], b[i]) = sc.read_vals<usize, usize>(); }
+        std::vector<usize> ans;
+        for (usize i = 0; i < v; i++) {
+            unionfind uf(v);
+            for (usize j = 0; j < e; j++) {
+                if (a[j] == i or b[j] == i) { continue; }
+                uf.unite(a[j], b[j]);
+            }
+            if (uf.size_of(i == 0 ? 1 : 0) < v - 1) { ans.push_back(i); }
+        }
+        std::sort(ans.begin(), ans.end());
+        pr.println(ans.size());
+        pr.println(ans);
+    }
+    static bool judge(std::ifstream& input_file, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
+    {
+        scanner in_sc{input_file}, gen_sc{generated_output_file}, sol_sc{solution_output_file};
+        const auto gen_n = gen_sc.read<usize>();
+        const auto sol_n = sol_sc.may_read<usize>();
+        if (gen_n != sol_n) { return false; }
+        for (usize i = 0; i < gen_n; i++) {
+            if (gen_sc.read<usize>() != sol_sc.may_read<usize>()) { return false; }
+        }
+        return true;
+    }
+    struct small_constraints
+    {
+        static constexpr usize v_min = 2, v_max = 100;
+        static constexpr usize e_max = 110;
+    };
+    struct large_constraints
+    {
+        static constexpr usize v_min = 2, v_max = 1000;
+        static constexpr usize e_max = 1010;
+    };
+};
+}  // namespace libtest

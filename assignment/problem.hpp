@@ -8,7 +8,7 @@ namespace libtest {
 struct assignment
 {
     static constexpr const char* path       = "assignment";
-    static constexpr const char* name       = "Assignment";
+    static constexpr const char* name       = "Assignment Problem";
     static constexpr std::size_t time_limit = 2000;
     template<typename constraints>
     static void generate_input(std::ofstream& input_file)

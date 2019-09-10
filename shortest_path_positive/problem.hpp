@@ -10,7 +10,7 @@ namespace libtest {
 struct shortest_path_positive
 {
     static constexpr const char* path       = "shortest_path_positive";
-    static constexpr const char* name       = "Shortest Path (Positive Weight)";
+    static constexpr const char* name       = "Single Source Shortest Path (Positive Weight)";
     static constexpr std::size_t time_limit = 2000;
     template<typename constraints>
     static void generate_input(std::ofstream& input_file)
