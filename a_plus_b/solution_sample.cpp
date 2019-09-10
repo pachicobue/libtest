@@ -6,7 +6,6 @@
  */
 #include <cassert>
 
-#include "../utils/logger.hpp"
 #include "../utils/unit_test.hpp"
 #include "problem.hpp"
 namespace {
@@ -59,9 +58,8 @@ struct tle_hard
 }  // namespace
 int main()
 {
-    libtest::unit_test<libtest::a_plus_b> test{5, 5};  // smallを5ケース, largeを5ケース生成
-    test.run_test<ac>();
-    test.run_test<wa>();
-    test.run_test<tle_soft>();
-    test.run_test<tle_hard>();
+    libtest::unit_test<libtest::a_plus_b>::run_test<ac>(5, 5);
+    libtest::unit_test<libtest::a_plus_b>::run_test<wa>(5, 5);
+    libtest::unit_test<libtest::a_plus_b>::run_test<tle_soft>(5, 5);
+    libtest::unit_test<libtest::a_plus_b>::run_test<tle_hard>(5, 5);
 }

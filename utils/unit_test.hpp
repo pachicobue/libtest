@@ -6,7 +6,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "logger.hpp"
+#include "printer.hpp"
 #include "types.hpp"
 namespace libtest {
 namespace fs = std::filesystem;
@@ -17,7 +17,6 @@ class unit_test
     using attr  = typename ansi_sgr::attribute;
 
 public:
-    using problem_type = Problem;
     static constexpr ansi_sgr base_color{color::cyan, attr::reset};
     static constexpr ansi_sgr message_color{color::white, attr::reset};
     static constexpr ansi_sgr bold_message_color{color::white, attr::bold};
@@ -29,27 +28,28 @@ public:
     static constexpr ansi_sgr fatal_color{color::red, attr::reset};
     static constexpr ansi_sgr bold_fatal_color{color::red, attr::bold};
     static constexpr ansi_sgr reset{color::white, attr::reset};
-    unit_test(const usize small_gen_num, const usize large_gen_num) : small_gen_num{small_gen_num}, large_gen_num{large_gen_num}, testcase_dir{fs::path(LIBTEST_ROOT) / std::string(problem_type::path) / "test_cases"}, gen_case_dir{testcase_dir / "generated"} {}
+    unit_test() = delete;
     template<typename Solution>
-    bool run_test(const bool testcase_cache = false)
+    static bool run_test(const usize small_gen_num, const usize large_gen_num, const bool testcase_cache = false)
     {
-        *g_logger_ptr << base_color << "[==========] " << reset << bold_message_color << "Start (problem=\"" << problem_type::name << "\",solution=\"" << Solution::name << "\")" << reset << std::endl;
-        gen(testcase_cache);
-        const auto result  = test<Solution>();
+        cprintf(base_color, "[==========] "), cprintf(bold_message_color, "Start (problem=\"%\",solution=\"%\")\n", Problem::name, Solution::name);
+        gen(small_gen_num, large_gen_num, testcase_cache);
+        const auto result  = test<Solution>(small_gen_num, large_gen_num);
         const usize passed = result.first, failed = result.second;
-        *g_logger_ptr << base_color << "[----------] " << reset << bold_message_color << "Summarize results" << reset << std::endl;
-        if (passed > 0) { *g_logger_ptr << passed_color << "[  PASSED  ] " << reset << message_color << passed << " cases" << reset << std::endl; }
-        if (failed > 0) { *g_logger_ptr << failed_color << "[  FAILED  ] " << reset << message_color << failed << " cases" << reset << std::endl; }
-        *g_logger_ptr << base_color << "[==========] " << reset << bold_message_color << "End (problem=\"" << problem_type::name << "\",solution=\"" << Solution::name << "\")" << reset << std::endl;
-        *g_logger_ptr << std::endl;
+        cprintf(base_color, "[----------] "), cprintf(bold_message_color, "Summarize results\n");
+        if (passed > 0) { cprintf(passed_color, "[  PASSED  ] "), cprintf(message_color, "% cases\n", passed); }
+        if (failed > 0) { cprintf(passed_color, "[  FAILED  ] "), cprintf(message_color, "% cases\n", failed); }
+        cprintf(base_color, "[==========] "), cprintf(bold_message_color, "End (problem=\"%\",solution=\"%\")\n\n", Problem::name, Solution::name);
         return failed == 0;
     }
 
 private:
-    fs::path small_genfile_path(const usize index, const bool in) const { return gen_case_dir / (std::string("small_") + std::to_string(index) + (in ? std::string(".in") : std::string(".out"))); }
-    fs::path large_genfile_path(const usize index, const bool in) const { return gen_case_dir / (std::string("large_") + std::to_string(index) + (in ? std::string(".in") : std::string(".out"))); }
+    static fs::path test_case_dir() { return fs::path(LIBTEST_ROOT) / std::string(Problem::path) / "test_cases"; }
+    static fs::path gen_case_dir() { return test_case_dir() / "generated"; }
+    static fs::path small_genfile_path(const usize index, const bool in) { return gen_case_dir() / (std::string("small_") + std::to_string(index) + (in ? std::string(".in") : std::string(".out"))); }
+    static fs::path large_genfile_path(const usize index, const bool in) { return gen_case_dir() / (std::string("large_") + std::to_string(index) + (in ? std::string(".in") : std::string(".out"))); }
     template<typename Process>
-    usize run(const Process& process)
+    static usize run(const Process& process)
     {
         std::promise<usize> promise;
         std::future<usize> future = promise.get_future();
@@ -62,81 +62,80 @@ private:
                 promise.set_value(time_ms);
             },
             std::move(promise));
-        if (future.wait_for(std::chrono::milliseconds{problem_type::time_limit * 2}) != std::future_status::timeout) {
+        if (future.wait_for(std::chrono::milliseconds{Problem::time_limit * 2}) != std::future_status::timeout) {
             const usize time_ms = future.get();
             return thread.join(), time_ms;
         } else {
-            return thread.detach(), problem_type::time_limit * 2;  // 直後にstd::terminate()する
+            return thread.detach(), Problem::time_limit * 2;  // 直後にstd::terminate()する
         }
     }
-    void gen(const bool testcase_cache)
+    static void gen(const usize small_gen_num, const usize large_gen_num, const bool testcase_cache)
     {
-        *g_logger_ptr << base_color << "[----------] " << reset << bold_message_color << "Generate tests" << reset << std::endl;
+        cprintf(base_color, "[----------] "), cprintf(bold_message_color, "Generate tests\n");
         static std::ofstream input_file;
         static std::ifstream output_file;
-        fs::create_directory(testcase_dir), fs::create_directory(gen_case_dir);
+        fs::create_directory(test_case_dir()), fs::create_directory(gen_case_dir());
         for (usize index = 1; index <= small_gen_num; index++) {
             const fs::path input_file_path = small_genfile_path(index, true), output_file_path = small_genfile_path(index, false);
             if (testcase_cache and fs::exists(input_file_path)) { continue; }
-            *g_logger_ptr << ac_color << "[ GENERATE ] " << reset << message_color << input_file_path.filename() << reset << std::endl;
+            cprintf(ac_color, "[ GENERATE ] "), cprintln(message_color, input_file_path.filename());
             input_file.open(input_file_path);
-            problem_type::template generate_input<typename problem_type::small_constraints>(input_file);
+            Problem::template generate_input<typename Problem::small_constraints>(input_file);
             input_file.close(), output_file.open(input_file_path), input_file.open(output_file_path);
-            *g_logger_ptr << ac_color << "[ GENERATE ] " << reset << message_color << output_file_path.filename() << reset << std::endl;
-            problem_type::generate_output(output_file, input_file);
+            cprintf(ac_color, "[ GENERATE ] "), cprintln(message_color, output_file_path.filename());
+            Problem::generate_output(output_file, input_file);
             input_file.close(), output_file.close();
         }
         for (usize index = 1; index <= large_gen_num; index++) {
             const fs::path input_file_path = large_genfile_path(index, true);
             if (testcase_cache and fs::exists(input_file_path)) { continue; }
-            *g_logger_ptr << ac_color << "[ GENERATE ] " << reset << message_color << input_file_path.filename() << reset << std::endl;
+            cprintf(ac_color, "[ GENERATE ] "), cprintln(message_color, input_file_path.filename());
             input_file.open(input_file_path);
-            problem_type::template generate_input<typename problem_type::large_constraints>(input_file);
+            Problem::template generate_input<typename Problem::large_constraints>(input_file);
             input_file.close();
         }
     }
     template<typename Solution>
-    bool check(const fs::path& input_file_path)
+    static bool check(const fs::path& input_file_path)
     {
         static std::ifstream input_file, generated_output_file, solution_output_file_in;
         static std::ofstream solution_output_file;
-        *g_logger_ptr << ac_color << "[ RUN      ] " << reset << message_color << input_file_path.filename() << reset << std::endl;
+        cprintf(ac_color, "[ RUN      ] "), cprintln(message_color, input_file_path.filename());
         auto solution_out_path = input_file_path;
         solution_out_path.replace_extension(".txt");
         input_file.open(input_file_path), solution_output_file.open(solution_out_path);
         const usize time_ms = run([&]() { Solution::solve(input_file, solution_output_file); });
         input_file.close(), solution_output_file.close();
         bool passed = false;
-        if (time_ms == problem_type::time_limit * 2) {
-            unmute_log();
-            *g_logger_ptr << bold_fatal_color << "[ TIME OUT ] " << reset << fatal_color << "Did not end in time_limit*2 (time_limit=" << problem_type::time_limit << " ms)" << reset << std::endl;
-            *g_logger_ptr << fatal_color << "[==========] " << reset << bold_fatal_color << "Abort (problem=\"" << problem_type::name << "\",solution=\"" << Solution::name << "\")" << reset << std::endl;
+        if (time_ms == Problem::time_limit * 2) {
+            cprintf(bold_fatal_color, "[ TIME OUT ] "), cprintf(fatal_color, "Did not end in time_limit*2 (time_limit=% ms)\n", Problem::time_limit);
+            cprintf(fatal_color, "[==========] "), cprintf(bold_fatal_color, "Abort (problem=\"%\",solution=\"%\")\n", Problem::name, Solution::name);
             std::terminate();
-        } else if (time_ms >= problem_type::time_limit) {
-            *g_logger_ptr << tle_color << "[      TLE ] " << reset << message_color << input_file_path.filename() << " (" << time_ms << " ms,time_limit=" << problem_type::time_limit << " ms)" << reset << std::endl;
+        } else if (time_ms >= Problem::time_limit) {
+            cprintf(tle_color, "[      TLE ] "), cprintf(message_color, "% (% ms)\n", input_file_path.filename(), time_ms);
         } else {
             auto generated_out_path = input_file_path;
             generated_out_path.replace_extension(".out");
             if (fs::exists(generated_out_path)) {
                 input_file.open(input_file_path), generated_output_file.open(generated_out_path), solution_output_file_in.open(solution_out_path);
-                const bool ok = problem_type::judge(input_file, generated_output_file, solution_output_file_in);
+                const bool ok = Problem::judge(input_file, generated_output_file, solution_output_file_in);
                 if (not ok) {
-                    *g_logger_ptr << wa_color << "[       WA ] " << reset << message_color << input_file_path.filename() << " (" << time_ms << " ms)" << reset << std::endl;
+                    cprintf(wa_color, "[       WA ] "), cprintf(message_color, "% (% ms)\n", input_file_path.filename(), time_ms);
                     std::ifstream in_file{input_file_path}, gen_file{generated_out_path}, sol_file{solution_out_path};
                     std::string line;
-                    *g_logger_ptr << message_color << "(Input)" << reset << std::endl;
-                    while (std::getline(in_file, line)) { *g_logger_ptr << message_color << line << reset << std::endl; }
-                    *g_logger_ptr << message_color << "(Expected)" << reset << std::endl;
-                    while (std::getline(gen_file, line)) { *g_logger_ptr << message_color << line << reset << std::endl; }
-                    *g_logger_ptr << message_color << "(Output)" << reset << std::endl;
-                    while (std::getline(sol_file, line)) { *g_logger_ptr << message_color << line << reset << std::endl; }
+                    cprintln(message_color, "(Input)");
+                    while (std::getline(in_file, line)) { cprintln(message_color, line); }
+                    cprintln(message_color, "(Expected)");
+                    while (std::getline(gen_file, line)) { cprintln(message_color, line); }
+                    cprintln(message_color, "(Output)");
+                    while (std::getline(sol_file, line)) { cprintln(message_color, line); }
                 } else {
-                    *g_logger_ptr << ac_color << "[       AC ] " << reset << message_color << input_file_path.filename() << " (" << time_ms << " ms)" << reset << std::endl;
+                    cprintf(ac_color, "[       AC ] "), cprintf(message_color, "% (% ms)\n", input_file_path.filename(), time_ms);
                     passed = true;
                 }
                 solution_output_file_in.close();
             } else {
-                *g_logger_ptr << ac_color << "[       OK ] " << reset << message_color << input_file_path.filename() << " (" << time_ms << " ms)" << reset << std::endl;
+                cprintf(ac_color, "[       OK ] "), cprintf(message_color, "% (% ms)\n", input_file_path.filename(), time_ms);
                 passed = true;
             }
         }
@@ -144,13 +143,13 @@ private:
         return passed;
     }
     template<typename Solution>
-    std::pair<usize, usize> test()
+    static std::pair<usize, usize> test(const usize small_gen_num, const usize large_gen_num)
     {
-        *g_logger_ptr << base_color << "[----------] " << reset << bold_message_color << "Run tests" << reset << std::endl;
+        cprintf(base_color, "[----------] "), cprintf(bold_message_color, "Run tests\n");
         std::ifstream input_file, generated_output_file, solution_output_file_in;
         std::ofstream solution_output_file;
         usize passed = 0, failed = 0;
-        for (const fs::directory_entry& file : fs::directory_iterator(testcase_dir)) {  // 手で作ったテストケース
+        for (const fs::directory_entry& file : fs::directory_iterator(test_case_dir())) {  // 手で作ったテストケース
             const auto input_file_path = file.path();
             if (input_file_path.extension() != ".in") { continue; }
             (check<Solution>(input_file_path) ? passed : failed)++;
@@ -165,7 +164,5 @@ private:
         }
         return {passed, failed};
     }
-    const usize small_gen_num, large_gen_num;
-    const fs::path testcase_dir, gen_case_dir;
 };
 }  // namespace libtest
