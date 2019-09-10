@@ -88,7 +88,7 @@ struct rsq_ruq_large
     struct large_constraints
     {
         static constexpr usize n_min = 0, n_max = 10000000;
-        static constexpr usize q_min = 1, q_max = 10000;
+        static constexpr usize q_min = 1, q_max = 5000;
         static constexpr ll v_min = -10000, v_max = 10000;
     };
 };
