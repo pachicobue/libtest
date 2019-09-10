@@ -20,7 +20,7 @@ struct rsq_ruq_large
         const auto q = rng.gen(q_min, q_max);
         pr.println(q);
         for (usize i = 0; i < q; i++) {
-            const auto type = rng.gen(0UL, 2UL);
+            const auto type = rng.gen(0UL, 3UL);
             if (type == 0) {
                 pr.println(type, rng.gen(n_min, n_max));
             } else if (type == 1) {
