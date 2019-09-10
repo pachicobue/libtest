@@ -89,7 +89,7 @@ struct disjoint_ranges
     };
     struct large_constraints
     {
-        static constexpr ll n_min = -10000000, n_max = 10000000;
+        static constexpr ll n_min = -1000000000, n_max = 1000000000;
         static constexpr usize q_min = 1, q_max = 100000;
     };
 };

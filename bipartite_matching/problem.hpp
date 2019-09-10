@@ -28,7 +28,7 @@ struct bipartite_matching
         std::set<P> st;
         for (usize i = 0; i < e;) {
             const auto u = rng.gen(0UL, v1 - 1);
-            const auto v = rng.gen(v1, v1 + v2 - 1);
+            const auto v = rng.gen(0UL, v2 - 1);
             if (st.find({u, v}) != st.end()) { continue; }
             pr.println(u, v), st.insert({u, v}), i++;
         }
@@ -41,7 +41,7 @@ struct bipartite_matching
         HopcroftKarp hk(v1, v2);
         for (usize i = 0; i < e; i++) {
             const auto [u, v] = sc.read_vals<usize, usize>();
-            hk.add_edge(u, v - v1);
+            hk.add_edge(u, v);
         }
         pr.println(hk.bipartite_matching());
     }
@@ -58,7 +58,7 @@ struct bipartite_matching
     struct large_constraints
     {
         static constexpr usize v_min = 2, v_max = 1000;
-        static constexpr usize e_min = 2, e_max = 2000;
+        static constexpr usize e_min = 2, e_max = 3000;
     };
 };
 }  // namespace libtest

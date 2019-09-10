@@ -38,7 +38,7 @@ struct all_pair_shortest_path
             g.add_edge(u, v, c);
         }
         const auto d = apsp(g);
-        pr.println(d);
+        for (const auto& l : d) { pr.println(l); }
     }
     static bool judge(std::ifstream& input_file, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
     {
@@ -57,14 +57,14 @@ struct all_pair_shortest_path
     }
     struct small_constraints
     {
-        static constexpr usize v_min = 2, v_max = 100;
+        static constexpr usize v_min = 2, v_max = 50;
         static constexpr usize e_max = 200;
         static constexpr ll c_min = 0, c_max = 100;
     };
     struct large_constraints
     {
-        static constexpr usize v_min = 2, v_max = 100;
-        static constexpr usize e_max = 1000;
+        static constexpr usize v_min = 2, v_max = 300;
+        static constexpr usize e_max = 10000;
         static constexpr ll c_min = 0, c_max = 10000;
     };
 };

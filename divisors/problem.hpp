@@ -16,19 +16,15 @@ struct divisors
         constexpr auto n_min = constraints::n_min, n_max = constraints::n_max;
         printer pr{input_file};
         const auto n = rng.gen(n_min, n_max);
-        std::vector<usize> ds;
-        for (usize i = 1; i <= n; i++) {
-            if (n % i == 0) { ds.push_back(i); }
-        }
         pr.println(n);
     }
     static void generate_output(std::ifstream& input_file, std::ofstream& output_file)
     {
         scanner sc(input_file);
         printer pr(output_file);
-        const auto n = sc.read<usize>();
-        std::vector<usize> ds;
-        for (usize i = 1; i <= n; i++) {
+        const auto n = sc.read<ll>();
+        std::vector<ll> ds;
+        for (ll i = 1; i <= n; i++) {
             if (n % i == 0) { ds.push_back(i); }
         }
         pr.println(ds.size());
@@ -41,17 +37,17 @@ struct divisors
         const auto sol_n = sol_sc.may_read<usize>();
         if (gen_n != sol_n) { return false; }
         for (usize i = 1; i <= gen_n; i++) {
-            if (gen_sc.read<usize>() != sol_sc.may_read<usize>()) { return false; }
+            if (gen_sc.read<ll>() != sol_sc.may_read<ll>()) { return false; }
         }
         return true;
     }
     struct small_constraints
     {
-        static constexpr usize n_min = 1, n_max = 1000;
+        static constexpr ll n_min = 1, n_max = 1000;
     };
     struct large_constraints
     {
-        static constexpr usize n_min = 1, n_max = 1000000;
+        static constexpr ll n_min = 1, n_max = 10000000000;
     };
 };
 }  // namespace libtest

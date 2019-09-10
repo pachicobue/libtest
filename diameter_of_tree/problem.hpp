@@ -81,7 +81,7 @@ struct diameter_of_tree
     };
     struct large_constraints
     {
-        static constexpr usize v_min = 2, v_max = 10000;
+        static constexpr usize v_min = 2, v_max = 100000;
     };
 };
 }  // namespace libtest

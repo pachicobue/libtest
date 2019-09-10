@@ -65,8 +65,8 @@ struct articulation_points
     };
     struct large_constraints
     {
-        static constexpr usize v_min = 2, v_max = 1000;
-        static constexpr usize e_max = 1010;
+        static constexpr usize v_min = 2, v_max = 100000;
+        static constexpr usize e_max = 200000;
     };
 };
 }  // namespace libtest

@@ -1,6 +1,7 @@
 #pragma once
 #include <fstream>
 
+#include "../utils/inf.hpp"
 #include "../utils/printer.hpp"
 #include "../utils/random.hpp"
 #include "../utils/scanner.hpp"
@@ -43,9 +44,9 @@ struct convex_hull
                 as.push_back(a), bs.push_back(b);
             } else {
                 const auto x = sc.read<ll>();
-                ll min       = std::numeric_limits<ll>::max();
+                ll min       = inf<ll>;
                 for (usize i = 0; i < as.size(); i++) { min = std::min(min, as[i] * x + bs[i]); }
-                pr.println(not as.empty(), min);
+                pr.println(min);
             }
         }
     }
@@ -59,10 +60,11 @@ struct convex_hull
                 in_sc.read_vals<usize, usize>();
             } else {
                 in_sc.read<ll>();
-                const auto [gen_b, gen_y] = gen_sc.read_vals<bool, ll>();
-                const auto [sol_b, sol_y] = sol_sc.may_read_vals<bool, ll>();
-                if (gen_b != sol_b) { return false; }
-                if (gen_b) {
+                const auto gen_y = gen_sc.read<ll>();
+                const auto sol_y = sol_sc.may_read<ll>();
+                if (gen_y > large_constraints::v_max * large_constraints::v_max + large_constraints::v_max) {
+                    if (sol_y <= large_constraints::v_max * large_constraints::v_max + large_constraints::v_max) { return false; }
+                } else {
                     if (gen_y != sol_y) { return false; }
                 }
             }
@@ -76,7 +78,7 @@ struct convex_hull
     };
     struct large_constraints
     {
-        static constexpr usize q_min = 1, q_max = 10000;
+        static constexpr usize q_min = 1, q_max = 100000;
         static constexpr ll v_min = -100000, v_max = 100000;
     };
 };

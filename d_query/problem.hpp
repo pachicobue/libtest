@@ -54,7 +54,7 @@ struct d_query
     }
     struct small_constraints
     {
-        static constexpr usize n_min = 1, n_max = 10000;
+        static constexpr usize n_min = 1, n_max = 200;
         static constexpr usize q_min = 1, q_max = 100;
         static constexpr ull v_min = 0, v_max = 999;
     };

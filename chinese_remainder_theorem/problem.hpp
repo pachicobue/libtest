@@ -49,12 +49,12 @@ struct chinese_remainder_theorem
     struct small_constraints
     {
         static constexpr usize n_min = 2, n_max = 5;
-        static constexpr ll mod_min = 1, mod_max = 10;
+        static constexpr ll mod_min = 1, mod_max = 1000;
         static constexpr ll v_min = 0, v_max = 100000LL;
     };
     struct large_constraints
     {
-        static constexpr usize n_min = 2, n_max = 2;
+        static constexpr usize n_min = 2, n_max = 3;
         static constexpr ll mod_min = 1, mod_max = 100000;
         static constexpr ll v_min = 0, v_max = 1000000000000000LL;
     };

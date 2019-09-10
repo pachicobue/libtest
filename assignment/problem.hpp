@@ -19,7 +19,7 @@ struct assignment
         const auto n = rng.gen(n_min, n_max);
         pr.println(n);
         const auto cost = rng.gen_vec(n, n, v_min, v_max);
-        pr.println(cost);
+        for (const auto& l : cost) { pr.println(l); }
     }
     static void generate_output(std::ifstream& input_file, std::ofstream& output_file)
     {
@@ -57,7 +57,7 @@ struct assignment
     };
     struct large_constraints
     {
-        static constexpr usize n_min = 1, n_max = 100;
+        static constexpr usize n_min = 1, n_max = 300;
         static constexpr ll v_min = -100000, v_max = 100000;
     };
 };
