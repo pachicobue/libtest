@@ -2,9 +2,10 @@
 #include <chrono>
 #include <filesystem>
 #include <fstream>
-#include <future>
 #include <iostream>
+#include <pthread.h>
 #include <sstream>
+#include <thread>
 
 #include "printer.hpp"
 #include "types.hpp"
@@ -51,23 +52,18 @@ private:
     template<typename Process>
     static usize run(const Process& process)
     {
-        std::promise<usize> promise;
-        std::future<usize> future = promise.get_future();
-        const auto start          = std::chrono::high_resolution_clock::now();
-        std::thread thread(
-            [&](std::promise<usize> promise) {
-                process();
-                const auto end      = std::chrono::high_resolution_clock::now();
-                const usize time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-                promise.set_value(time_ms);
-            },
-            std::move(promise));
-        if (future.wait_for(std::chrono::milliseconds{Problem::time_limit * 2}) != std::future_status::timeout) {
-            const usize time_ms = future.get();
-            return thread.join(), time_ms;
-        } else {
-            return thread.detach(), Problem::time_limit * 2;  // 直後にstd::terminate()する
-        }
+        constexpr usize timeout = Problem::time_limit * 2;
+        usize time_ms           = timeout;
+        const auto start        = std::chrono::high_resolution_clock::now();
+        std::thread timerbomb([&]() {
+            while (time_ms >= timeout and static_cast<usize>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count()) < timeout) {}
+            if (time_ms >= timeout) { std::terminate(); }
+        });
+        process();
+        const auto end = std::chrono::high_resolution_clock::now();
+        time_ms        = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+        timerbomb.join();
+        return time_ms;
     }
     static void gen(const usize small_gen_num, const usize large_gen_num, const bool testcase_cache)
     {
@@ -107,11 +103,7 @@ private:
         const usize time_ms = run([&]() { Solution::solve(input_file, solution_output_file); });
         input_file.close(), solution_output_file.close();
         bool passed = false;
-        if (time_ms == Problem::time_limit * 2) {
-            cprintf(bold_fatal_color, "[ TIME OUT ] "), cprintf(fatal_color, "Did not end in time_limit*2 (time_limit=% ms)\n", Problem::time_limit);
-            cprintf(fatal_color, "[==========] "), cprintf(bold_fatal_color, "Abort (problem=\"%\",solution=\"%\")\n", Problem::name, Solution::name);
-            std::terminate();
-        } else if (time_ms >= Problem::time_limit) {
+        if (time_ms >= Problem::time_limit) {
             cprintf(tle_color, "[      TLE ] "), cprintf(message_color, "% (% ms)\n", input_file_path.filename(), time_ms);
         } else {
             auto generated_out_path = input_file_path;
