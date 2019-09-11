@@ -68,7 +68,7 @@ struct shortest_path
     {
         static constexpr usize v_min = 2, v_max = 1000;
         static constexpr usize e_max = 10000;
-        static constexpr ll c_min = -10, c_max = 10000;
+        static constexpr ll c_min = -1000, c_max = 10000;
     };
 };
 }  // namespace libtest

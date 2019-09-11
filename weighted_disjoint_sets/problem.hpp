@@ -1,6 +1,7 @@
 #pragma once
 #include <fstream>
 
+#include "../utils/inf.hpp"
 #include "../utils/printer.hpp"
 #include "../utils/random.hpp"
 #include "../utils/scanner.hpp"
@@ -19,12 +20,17 @@ struct weighted_disjoint_sets
         printer pr{input_file};
         const auto n = rng.gen(n_min, n_max), q = rng.gen(q_min, q_max);
         input_file << n << " " << q << "\n";
+        const auto pot = rng.gen_vec(n, v_min / 2, v_max / 2);
         for (usize i = 0; i < q; i++) {
             const usize type = rng.gen(0UL, 2UL);
             if (type == 0) {
-                pr.println(type, rng.gen(0UL, n - 1), rng.gen(0UL, n - 1), rng.gen(v_min, v_max));
+                auto p = rng.gen_pair(0UL, n - 1);
+                if (rng.gen(0, 1)) { std::swap(p.first, p.second); }
+                pr.println(type, p.first, p.second, pot[p.second] - pot[p.first]);
             } else if (type == 1) {
-                pr.println(type, rng.gen(0UL, n - 1), rng.gen(0UL, n - 1));
+                auto p = rng.gen_pair(0UL, n - 1);
+                if (rng.gen(0, 1)) { std::swap(p.first, p.second); }
+                pr.println(type, p.first, p.second);
             } else {
                 pr.println(type, rng.gen(0UL, n - 1));
             }
@@ -42,16 +48,14 @@ struct weighted_disjoint_sets
             const usize type = sc.read<usize>();
             if (type == 0) {
                 const auto [a, b, v] = sc.read_vals<usize, usize, ll>();
-                if (id[a] != id[b]) {
-                    const usize aid = id[a], bid = id[b];
-                    const ll pl = pot[a] - pot[b] + v;
-                    for (usize i = 0; i < n; i++) {
-                        if (id[i] == bid) { id[i] = aid, pot[i] += pl; }
-                    }
+                const usize aid = id[a], bid = id[b];
+                const ll pl = pot[a] - pot[b] + v;
+                for (usize i = 0; i < n; i++) {
+                    if (id[i] == bid) { id[i] = aid, pot[i] += pl; }
                 }
             } else if (type == 1) {
                 const auto [a, b] = sc.read_vals<usize, usize>();
-                pr.println(id[a] == id[b], pot[b] - pot[a]);
+                pr.println(id[a] == id[b] ? pot[b] - pot[a] : inf<ll>);
             } else {
                 const auto ind = sc.read<usize>();
                 usize sum      = 0;
@@ -74,12 +78,9 @@ struct weighted_disjoint_sets
                 in_sc.read_vals<usize, usize, ll>();
             } else if (type == 1) {
                 in_sc.read_vals<usize, usize>();
-                const auto [gen_b, gen_d] = gen_sc.read_vals<bool, ll>();
-                const auto [sol_b, sol_d] = sol_sc.may_read_vals<bool, ll>();
-                if (gen_b != sol_b) { return false; }
-                if (gen_b) {
-                    if (gen_d != sol_d) { return false; }
-                }
+                const auto gen_d = gen_sc.read<ll>();
+                const auto sol_d = sol_sc.may_read<ll>();
+                if (gen_d != sol_d) { return false; }
             } else {
                 in_sc.read<usize>();
                 const auto gen_s = gen_sc.read<usize>();

@@ -87,9 +87,9 @@ struct rsq_on_tree
     };
     struct large_constraints
     {
-        static constexpr usize v_min = 2, v_max = 1000;
-        static constexpr ll a_min = -1000, a_max = 1000;
-        static constexpr usize q_min = 1, q_max = 1000;
+        static constexpr usize v_min = 2, v_max = 100000;
+        static constexpr ll a_min = -100000, a_max = 100000;
+        static constexpr usize q_min = 1, q_max = 100000;
     };
 };
 }  // namespace libtest

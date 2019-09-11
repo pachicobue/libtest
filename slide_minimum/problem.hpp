@@ -53,8 +53,7 @@ struct slide_minimum
     struct large_constraints
     {
         static constexpr usize n_min = 1, n_max = 100000;
-        static constexpr usize q_min = 1, q_max = 100000;
-        static constexpr ll v_min = -100000, v_max = 100000;
+        static constexpr ll v_min = -1000000000, v_max = 1000000000;
     };
 };
 }  // namespace libtest

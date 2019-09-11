@@ -10,8 +10,8 @@ class random_number_generator
 
 public:
     using result_type = rng_type::result_type;
-    constexpr result_type min() { return mt.min(); }
-    constexpr result_type max() { return mt.max(); }
+    static constexpr result_type min() { return rng_type::min(); }
+    static constexpr result_type max() { return rng_type::max(); }
     random_number_generator() : mt{std::random_device{}()} {}
     result_type operator()() { return mt(); }
     template<typename T>

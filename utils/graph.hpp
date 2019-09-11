@@ -77,15 +77,20 @@ cost_graph<T> random_cost_graph(const usize v, const usize e, const T c_min, con
 }
 graph random_dag(const usize v, const usize e)
 {
+    std::vector<usize> ind(v);
+    std::iota(ind.begin(), ind.end(), 0);
+    std::shuffle(ind.begin(), ind.end(), rng);
     graph g{v};
     unionfind uf{v};
     for (usize i = 0; i < v - 1;) {
-        const auto p = rng.gen_pair(0UL, v - 1);
+        const auto q                    = rng.gen_pair(0UL, v - 1);
+        const std::pair<usize, usize> p = {ind[q.first], ind[q.second]};
         if (uf.same(p.first, p.second)) { continue; }
         uf.unite(p.first, p.second), g.add_edge(p.first, p.second), i++;
     }
     for (usize i = v - 1; i < e;) {
-        const auto p = rng.gen_pair(0UL, v - 1);
+        const auto q                    = rng.gen_pair(0UL, v - 1);
+        const std::pair<usize, usize> p = {ind[q.first], ind[q.second]};
         if (p.first == p.second) { continue; }
         g.add_edge(p.first, p.second), i++;
     }

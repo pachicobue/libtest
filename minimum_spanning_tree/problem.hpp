@@ -58,15 +58,15 @@ struct minimum_spanning_tree
     }
     struct small_constraints
     {
-        static constexpr usize v_min = 2, v_max = 100;
-        static constexpr usize e_max = 1000;
+        static constexpr usize v_min = 2, v_max = 30;
+        static constexpr usize e_max = 100;
         static constexpr ll c_min = -100, c_max = 100;
     };
     struct large_constraints
     {
-        static constexpr usize v_min = 2, v_max = 10000;
-        static constexpr usize e_max = 100000;
-        static constexpr ll c_min = -10000, c_max = 10000;
+        static constexpr usize v_min = 2, v_max = 100000;
+        static constexpr usize e_max = 300000;
+        static constexpr ll c_min = -100000, c_max = 100000;
     };
 };
 }  // namespace libtest

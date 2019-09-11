@@ -25,11 +25,17 @@ struct eulerian_trail
         std::vector<P> edge;
         for (usize i = 0; i < v - 1; i++) { edge.push_back({i, i + 1}); }
         for (usize i = v - 1, p = v - 1; i < e; i++) {
-            auto next = rng.gen(0UL, v - 2);
-            if (next >= p) { next++; }
+            const auto next = rng.gen(0UL, v - 1);
             edge.push_back({p, next}), p = next;
         }
-        for (const auto& e : edge) { pr.println(e.first, e.second); }
+        std::shuffle(edge.begin(), edge.end(), rng);
+        for (const auto& e : edge) {
+            if (rng.gen(0, 1)) {
+                pr.println(e.first, e.second);
+            } else {
+                pr.println(e.second, e.first);
+            }
+        }
     }
     static void generate_output(std::ifstream&, std::ofstream& output_file)
     {
@@ -60,12 +66,12 @@ struct eulerian_trail
     struct small_constraints
     {
         static constexpr usize v_min = 2, v_max = 100;
-        static constexpr usize e_max = 200;
+        static constexpr usize e_max = 300;
     };
     struct large_constraints
     {
-        static constexpr usize v_min = 2, v_max = 1000;
-        static constexpr usize e_max = 2000;
+        static constexpr usize v_min = 2, v_max = 100000;
+        static constexpr usize e_max = 300000;
     };
 };
 }  // namespace libtest

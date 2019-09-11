@@ -25,12 +25,12 @@ struct mod_fibonacci
         scanner sc{input_file};
         printer pr{output_file};
         const auto [n, k] = sc.read_vals<usize, usize>();
-        std::vector<uint> ans(n, 1);
-        for (usize i = k; i < n; i++) {
+        std::vector<uint> ans(n + 1, 1);
+        for (usize i = k; i <= n; i++) {
             ans[i] = 0;
             for (usize j = i - k; j < i; j++) { (ans[i] += ans[j]) %= mod; }
         }
-        pr.println(ans[n - 1]);
+        pr.println(ans[n]);
     }
     static bool judge(std::ifstream& /*input_file*/, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
     {

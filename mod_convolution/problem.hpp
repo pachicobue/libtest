@@ -15,11 +15,11 @@ struct mod_convolution
     {
         constexpr auto n_min = constraints::n_min, n_max = constraints::n_max;
         printer pr{input_file};
-        const auto n = rng.gen(n_min, n_max);
         const auto m = rng.gen(n_min, n_max);
-        pr.println(n, m);
-        const auto a = rng.gen_vec(n, 0U, mod - 1);
-        const auto b = rng.gen_vec(m, 0U, mod - 1);
+        const auto n = rng.gen(n_min, n_max);
+        pr.println(m, n);
+        const auto a = rng.gen_vec(m, 0U, mod - 1);
+        const auto b = rng.gen_vec(n, 0U, mod - 1);
         pr.println(a);
         pr.println(b);
     }
@@ -27,11 +27,11 @@ struct mod_convolution
     {
         scanner sc(input_file);
         printer pr(output_file);
-        const auto [n, m] = sc.read_vals<usize, usize>();
-        const auto a = sc.read_vec<ll>(n), b = sc.read_vec<ll>(m);
+        const auto [m, n] = sc.read_vals<usize, usize>();
+        const auto a = sc.read_vec<ll>(m), b = sc.read_vec<ll>(n);
         std::vector<uint> ans(n + m - 1, 0);
-        for (usize i = 0; i < n; i++) {
-            for (usize j = 0; j < m; j++) { (ans[i + j] += static_cast<uint>(a[i] * b[j] % mod)) %= mod; }
+        for (usize i = 0; i < m; i++) {
+            for (usize j = 0; j < n; j++) { (ans[i + j] += static_cast<uint>(a[i] * b[j] % mod)) %= mod; }
         }
         pr.println(ans);
     }

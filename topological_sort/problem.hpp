@@ -48,13 +48,13 @@ struct topological_sort
     }
     struct small_constraints
     {
-        static constexpr usize v_min = 2, v_max = 10;
-        static constexpr usize e_max = 20;
+        static constexpr usize v_min = 2, v_max = 100;
+        static constexpr usize e_max = 200;
     };
     struct large_constraints
     {
-        static constexpr usize v_min = 2, v_max = 100;
-        static constexpr usize e_max = 1000;
+        static constexpr usize v_min = 2, v_max = 100000;
+        static constexpr usize e_max = 200000;
     };
 };
 }  // namespace libtest

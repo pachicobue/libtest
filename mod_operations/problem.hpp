@@ -22,7 +22,11 @@ struct mod_operations
         pr.println(x, q);
         for (usize i = 0; i < q; i++) {
             const usize type = rng.gen(0UL, 13UL);
-            if (type == 6 or type == 13) {
+            if (type == 3 or type == 12) {
+                auto v = rng.gen(v_min, v_max);
+                while (v % mod == 0) { v = rng.gen(v_min, v_max); }
+                pr.println(type, v);
+            } else if (type == 6 or type == 13) {
                 const auto i = rng.gen(i_min, i_max);
                 pr.println(type, i);
             } else {
@@ -37,6 +41,7 @@ struct mod_operations
         printer pr(output_file);
         const auto [xi, q] = sc.read_vals<ll, usize>();
         auto x             = xi % mod;
+        auto p             = [&](auto&& self, const ll x, const ll n) -> ll { return n == 0 ? 1LL : (n % 2 == 1) ? self(self, x, n - 1) * x % mod : self(self, x * x % mod, n / 2); };
         for (usize i = 0; i < q; i++) {
             const auto [type, v] = sc.read_vals<usize, ll>();
             if (type == 0) {
@@ -46,11 +51,11 @@ struct mod_operations
             } else if (type == 2) {
                 pr.println((x * v) % mod);
             } else if (type == 3) {
-                pr.println(v % mod != 0, x);
+                pr.println(x * p(p, v, mod - 2) % mod);
             } else if (type == 4) {
                 pr.println((v - x) % mod);
             } else if (type == 5) {
-                pr.println(x % mod != 0, x);
+                pr.println(x % mod == 0 ? -1 : v * p(p, x, mod - 2) % mod);
             } else if (type == 6) {
                 ll y = 1;
                 for (ll i = 0; i < v; i++) { (y *= x) %= mod; }
@@ -66,7 +71,6 @@ struct mod_operations
             } else if (type == 11) {
                 (x *= v) %= mod;
             } else if (type == 12) {
-                auto p = [&](auto&& self, const ll x, const ll n) -> ll { return n == 0 ? 1LL : (n % 2 == 1) ? self(self, x, n - 1) * x % mod : self(self, x * x % mod, n / 2); };
                 (x *= p(p, v, mod - 2)) %= mod;
             } else {
                 ll y = 1;
@@ -82,31 +86,15 @@ struct mod_operations
         for (usize i = 0; i < q; i++) {
             const auto [type, v] = in_sc.read_vals<usize, ll>();
             if (type <= 7) {
-                if (type == 3) {
-                    const auto [gen_b, gen_x] = gen_sc.read_vals<bool, ll>();
-                    const auto [sol_b, sol_x] = sol_sc.may_read_vals<bool, ll>();
-                    if (gen_b != sol_b) { return false; }
-                    if (gen_b) {
-                        if ((*sol_x * v - gen_x) % mod != 0) { return false; }
-                    }
-                } else if (type == 5) {
-                    const auto [gen_b, gen_x] = gen_sc.read_vals<bool, ll>();
-                    const auto [sol_b, sol_x] = sol_sc.may_read_vals<bool, ll>();
-                    if (gen_b != sol_b) { return false; }
-                    if (gen_b) {
-                        if ((gen_x * *sol_x - v) % mod != 0) { return false; }
-                    }
-                } else {
-                    const auto gen = gen_sc.read<ll>();
-                    const auto sol = sol_sc.may_read<ll>();
-                    if (not sol) { return false; }
-                    if ((gen - *sol) % mod != 0) { return false; }
-                }
+                const auto gen = gen_sc.read<ll>();
+                const auto sol = sol_sc.may_read<ll>();
+                if (not sol) { return false; }
+                if ((gen - *sol) % mod != 0) { return false; }
             }
         }
         return true;
     }
-    static constexpr uint mod = 1000000007;
+    static constexpr uint mod = 924844033;
     struct small_constraints
     {
         static constexpr usize q_min = 1, q_max = 100;

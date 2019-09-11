@@ -23,31 +23,33 @@ struct maximum_prime_factor_table
         scanner sc(input_file);
         printer pr(output_file);
         const auto n = sc.read<usize>();
-        std::vector<bool> isp(n + 1, true);
-        isp[0] = isp[1] = false;
+        std::vector<usize> ans(n + 1, 0);
         for (usize i = 2; i <= n; i++) {
-            for (usize j = 2; j * j <= i; j++) {
-                if (i % j == 0) { isp[i] = false; }
+            usize num = i;
+            for (usize p = 2; p <= num; p++) {
+                if (num % p != 0) { continue; }
+                ans[i] = std::max(ans[i], p);
+                while (num % p == 0) { num /= p; }
             }
         }
-        pr.println(std::vector<bool>(isp.begin() + 1, isp.end()));
+        pr.println(std::vector<usize>(ans.begin() + 2, ans.end()));
     }
     static bool judge(std::ifstream& input_file, std::ifstream& generated_output_file, std::ifstream& solution_output_file)
     {
         scanner in_sc(input_file), gen_sc(generated_output_file), sol_sc(solution_output_file);
         const auto [n, q] = in_sc.read_vals<usize, usize>();
-        for (usize i = 1; i <= n; i++) {
-            if (gen_sc.read<bool>() != sol_sc.may_read<bool>()) { return false; }
+        for (usize i = 2; i <= n; i++) {
+            if (gen_sc.read<usize>() != sol_sc.may_read<usize>()) { return false; }
         }
         return true;
     }
     struct small_constraints
     {
-        static constexpr usize n_min = 1, n_max = 1000;
+        static constexpr usize n_min = 2, n_max = 1000;
     };
     struct large_constraints
     {
-        static constexpr usize n_min = 1, n_max = 1000000;
+        static constexpr usize n_min = 2, n_max = 100000;
     };
 };
 }  // namespace libtest

@@ -13,23 +13,21 @@ struct segment_decomposition
     template<typename constraints>
     static void generate_input(std::ofstream& input_file)
     {
-        constexpr auto n_min = constraints::n_min, n_max = constraints::n_max;
+        constexpr auto l_min = constraints::l_min, l_max = constraints::l_max;
         constexpr auto q_min = constraints::q_min, q_max = constraints::q_max;
         printer pr{input_file};
-        const auto n = rng.gen(n_min, n_max);
+        const auto n = 1UL << rng.gen(l_min, l_max);
         const auto q = rng.gen(q_min, q_max);
         usize sz     = 1;
         for (; sz < n; sz <<= 1) {}
         pr.println(n, q);
         for (usize i = 0; i < q; i++) {
-            const auto type = rng.gen(0UL, 2UL);
+            const auto type = rng.gen(0UL, 1UL);
             if (type == 0) {
                 const auto p = rng.gen_pair(0UL, n - 1);
                 pr.println(type, p.first, p.second + 1);
-            } else if (type == 1) {
-                pr.println(type, rng.gen(0UL, n - 1));
             } else {
-                pr.println(type, rng.gen(1Ul, sz * 2 - 1));
+                pr.println(type, rng.gen(0UL, n - 1));
             }
         }
     }
@@ -61,18 +59,17 @@ struct segment_decomposition
                         for (usize j = left; j < right; j++) { on[j] = false; }
                     }
                 }
-                pr.println(sub.size(), sub);
-            } else if (type == 1) {
+                pr.println(sub.size());
+                for (const usize i : sub) { pr.println(rs[i].first, rs[i].second); }
+            } else {
                 const auto ind = sc.read<usize>();
                 std::vector<usize> sub;
                 for (usize i = 1; i < rs.size(); i++) {
                     const usize left = rs[i].first, right = rs[i].second;
                     if (left <= ind and ind < right) { sub.push_back(i); }
                 }
-                pr.println(sub.size(), sub);
-            } else {
-                const auto ind = sc.read<usize>();
-                pr.println(rs[ind].first, rs[ind].second);
+                pr.println(sub.size());
+                for (const usize i : sub) { pr.println(rs[i].first, rs[i].second); }
             }
         }
     }
@@ -87,26 +84,21 @@ struct segment_decomposition
                 const auto gen_m = gen_sc.read<usize>();
                 const auto sol_m = sol_sc.may_read<usize>();
                 if (gen_m != sol_m) { return false; }
-                const auto gen_v = gen_sc.read_vec<usize>(gen_m);
-                const auto sol_v = sol_sc.may_read_vec<usize>(*sol_m);
                 for (usize i = 0; i < gen_m; i++) {
-                    if (gen_v[i] != sol_v[i]) { return false; }
+                    const auto [gen_l, gen_r] = gen_sc.read_vals<usize, usize>();
+                    const auto [sol_l, sol_r] = sol_sc.may_read_vals<usize, usize>();
+                    if (gen_l != sol_l or gen_r != sol_r) { return false; }
                 }
-            } else if (type == 1) {
+            } else {
                 in_sc.read_vals<usize>();
                 const auto gen_m = gen_sc.read<usize>();
                 const auto sol_m = sol_sc.may_read<usize>();
                 if (gen_m != sol_m) { return false; }
-                const auto gen_v = gen_sc.read_vec<usize>(gen_m);
-                const auto sol_v = sol_sc.may_read_vec<usize>(*sol_m);
                 for (usize i = 0; i < gen_m; i++) {
-                    if (gen_v[i] != sol_v[i]) { return false; }
+                    const auto [gen_l, gen_r] = gen_sc.read_vals<usize, usize>();
+                    const auto [sol_l, sol_r] = sol_sc.may_read_vals<usize, usize>();
+                    if (gen_l != sol_l or gen_r != sol_r) { return false; }
                 }
-            } else {
-                in_sc.read_vals<usize>();
-                const auto [gen_l, gen_r] = gen_sc.read_vals<usize, usize>();
-                const auto [sol_l, sol_r] = sol_sc.read_vals<usize, usize>();
-                if (gen_l != sol_l or gen_r != sol_r) { return false; }
             }
         }
         return true;
@@ -114,12 +106,12 @@ struct segment_decomposition
 
     struct small_constraints
     {
-        static constexpr usize n_min = 1, n_max = 100;
+        static constexpr usize l_min = 0, l_max = 7;
         static constexpr usize q_min = 1, q_max = 100;
     };
     struct large_constraints
     {
-        static constexpr usize n_min = 1, n_max = 100000;
+        static constexpr usize l_min = 0, l_max = 16;
         static constexpr usize q_min = 1, q_max = 100000;
     };
 };
