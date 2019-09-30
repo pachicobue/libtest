@@ -18,7 +18,7 @@ struct xor_maximization
         constexpr auto v_max = 1ULL << d_max;
         printer pr{input_file};
         const auto n = rng.gen(n_min, n_max);
-        const auto v = rng.gen_vec(n, 0ULL, v_max);
+        const auto v = rng.gen_vec(n, 0ULL, v_max - 1);
         pr.println(n);
         pr.println(v);
     }
