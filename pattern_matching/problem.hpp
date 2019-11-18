@@ -68,8 +68,8 @@ struct pattern_matching
     };
     struct large_constraints
     {
-        static constexpr usize m_min = 1, m_max = 100000;
-        static constexpr usize n_min = 1, n_max = 1000;
+        static constexpr usize m_min = 1, m_max = 1000000;
+        static constexpr usize n_min = 1, n_max = 10000;
         static constexpr char c_min = 'a', c_max = 'z';
     };
 };
